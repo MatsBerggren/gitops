@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+patches:
+  - target:
+      version: v1
+      kind: PersistentVolumeClaim
+      name: home-assistant
+    path: patch-pvc.yaml
+  - target:
+      version: networking.k8s.io/v1
+      kind: Ingress
+      name: home-assistant
+    path: patch-ingress.yaml

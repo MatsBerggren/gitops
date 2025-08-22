@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: home-automation
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/you/gitops
+        revision: main
+        directories:
+          - path: apps/home-automation/*/overlays/homelab
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: home-automation
+      source:
+        repoURL: https://github.com/you/gitops
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: home-automation
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
