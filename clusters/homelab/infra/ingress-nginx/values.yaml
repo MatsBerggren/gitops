@@ -1,0 +1,4 @@
+controller:
+  config:
+    ssl-redirect: "false"
+    use-forwarded-headers: "true"
