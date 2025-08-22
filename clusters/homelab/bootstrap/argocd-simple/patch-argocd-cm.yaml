@@ -5,4 +5,4 @@ metadata:
   namespace: argocd
 data:
   # Viktigt för cookies/redirects
-  url: https://argo.support4u.se
+  url: https://arg.support4u.se

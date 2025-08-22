@@ -9,4 +9,4 @@ spec:
     kind: ClusterIssuer
     name: letsencrypt-dns
   dnsNames:
-    - argo.support4u.se
+    - arg.support4u.se

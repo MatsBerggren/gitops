@@ -4,18 +4,17 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    # Förhindra loop även om controllern skulle ha global redirect på
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "letsencrypt-dns"
+    nginx.ingress.kubernetes.io/proxy-body-size: "64m"
 spec:
-  ingressClassName: nginx
   tls:
-    - hosts: ["argo.support4u.se"]
+    - hosts: [arg.support4u.se]
       secretName: argocd-server-tls
   rules:
-    - host: argo.support4u.se
+    - host: arg.support4u.se
       http:
         paths:
           - path: /
@@ -24,4 +23,4 @@ spec:
               service:
                 name: argocd-server
                 port:
-                  number: 80
+                  number: 80   # argocd-server lyssnar HTTP pga --insecure
