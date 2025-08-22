@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  namespace: argocd
+data:
+  # Kör utan egen TLS bakom ingress (TLS terminerar i ingress)
+  server.insecure: "true"
