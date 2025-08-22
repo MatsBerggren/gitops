@@ -4,21 +4,16 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-
-    # Backend kör utan egen TLS (server.insecure: "true")
+    # NGINX pratar HTTP till Argo CD (som kör server.insecure: "true")
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 
-    # Säkerställ att all trafik blir HTTPS
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-
-    # Låt cert-manager hämta cert från din ClusterIssuer
+    # Låt cert-manager fixa certet
     cert-manager.io/cluster-issuer: "letsencrypt-dns"
 spec:
+  # Använd INTE den gamla "kubernetes.io/ingress.class"-annotationen – modern field:
+  ingressClassName: nginx
   tls:
-    - hosts:
-        - argo.support4u.se
+    - hosts: ["argo.support4u.se"]
       secretName: argocd-server-tls
   rules:
     - host: argo.support4u.se
