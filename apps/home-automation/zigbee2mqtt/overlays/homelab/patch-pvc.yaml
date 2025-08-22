@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: zigbee2mqtt
 spec:
-  storageClassName: shared-nfs
+  storageClassName: local-path
   resources:
     requests:
       storage: 10Gi
