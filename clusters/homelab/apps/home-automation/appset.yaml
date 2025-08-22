@@ -6,7 +6,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: https://github.com/you/gitops
+        repoURL: https://github.com/MatsBerggren/gitops
         revision: main
         directories:
           - path: apps/home-automation/*/overlays/homelab
@@ -16,7 +16,7 @@ spec:
     spec:
       project: home-automation
       source:
-        repoURL: https://github.com/you/gitops
+        repoURL: https://github.com/MatsBerggren/gitops
         targetRevision: main
         path: '{{path}}'
       destination:
