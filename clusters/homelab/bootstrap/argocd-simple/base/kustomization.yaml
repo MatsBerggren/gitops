@@ -1,8 +1,0 @@
-namespace: argocd
-resources:
-  - namespace.yaml
-  - patch-argocd-cm.yaml
-  - patch-argocd-cmd-params-cm.yaml
-  - patch-argocd-server-svc.yaml
-  - ingress.yaml
-  - certificate.yaml
