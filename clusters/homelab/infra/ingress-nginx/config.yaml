@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+data:
+  # Lita på X-Forwarded-* från proxy/LB (t.ex. Cloudflare)
+  use-forwarded-headers: "true"
+  # Ha INTE global ssl-redirect på – vi styr det per ingress
+  ssl-redirect: "false"
