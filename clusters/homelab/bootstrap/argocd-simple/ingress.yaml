@@ -4,17 +4,18 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    cert-manager.io/cluster-issuer: "letsencrypt-dns"
+    nginx.ingress.kubernetes.io/proxy-set-headers: "argocd/argocd-proxy-headers"
 spec:
   ingressClassName: nginx
   tls:
-    - hosts: ["argo.support4u.se"]
+    - hosts: ["arg.support4u.se"]
       secretName: argocd-server-tls
   rules:
-    - host: argo.support4u.se
+    - host: arg.support4u.se
       http:
         paths:
           - path: /

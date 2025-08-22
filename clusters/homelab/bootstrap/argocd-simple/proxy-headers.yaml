@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-proxy-headers
+  namespace: argocd
+data:
+  X-Forwarded-Proto: "https"
+  X-Forwarded-Host: "arg.support4u.se"
+  X-Forwarded-Port: "443"

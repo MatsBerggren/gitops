@@ -4,5 +4,4 @@ metadata:
   name: argocd-cm
   namespace: argocd
 data:
-  # Viktigt för cookies/redirects
   url: https://arg.support4u.se
