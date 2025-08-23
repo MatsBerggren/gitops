@@ -1,0 +1,14 @@
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # Projects
+  - ../projects/project-home-automation.yaml
+
+  # ApplicationSets / Applications
+  - ../apps/home-automation/appset.yaml
+
+  # Platform bits managed declarativt (ej helm release här)
+  - ../infra/ingress-nginx/config.yaml
+  - ../apps/platform/rancher/kustomization.yaml

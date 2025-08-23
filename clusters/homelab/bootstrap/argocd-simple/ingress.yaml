@@ -1,27 +1,27 @@
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: rancher
-  namespace: cattle-system
+  name: argocd-server
+  namespace: argocd
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-set-headers: "argocd/argocd-proxy-headers"
 spec:
   ingressClassName: nginx
   tls:
-    - hosts: ["rancher.support4u.se"]
-      secretName: tls-rancher-ingress
+    - hosts: ["arg.support4u.se"]
+      secretName: argocd-server-tls
   rules:
-    - host: rancher.support4u.se
+    - host: arg.support4u.se
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: rancher
+                name: argocd-server
                 port:
                   number: 80

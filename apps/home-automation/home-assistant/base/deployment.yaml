@@ -1,24 +1,79 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: home-assistant
+  name: homeassistant
+  namespace: homeassistant
+  labels:
+    io.kompose.service: homeassistant
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
-    matchLabels: { app: home-assistant }
+    matchLabels:
+      io.kompose.service: homeassistant
   template:
     metadata:
-      labels: { app: home-assistant }
+      labels:
+        io.kompose.service: homeassistant
     spec:
       containers:
-        - name: home-assistant
-          image: ghcr.io/home-assistant/home-assistant:stable
+        - name: homeassistant
+          image: homeassistant/home-assistant:latest
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
           ports:
-            - containerPort: 8123
+            - name: http
+              containerPort: 8123
+              protocol: TCP
+            - name: coap-udp
+              containerPort: 5683
+              protocol: UDP
+            - name: coap-tcp
+              containerPort: 5683
+              protocol: TCP
+            - name: tcp-21063
+              containerPort: 21063
+              protocol: TCP
+            - name: tcp-1400
+              containerPort: 1400
+              protocol: TCP
           volumeMounts:
-            - name: data
+            - name: cp210x
+              mountPath: /dev/ttyUSB-cp210x
+            - name: homeassistant-claim0
               mountPath: /config
+            - name: homeassistant-claim1
+              mountPath: /media/cameras
+            - name: homeassistant-cm2
+              mountPath: /etc/localtime
+              readOnly: true
+              subPath: localtime
+            - name: homeassistant-cm3
+              mountPath: /etc/timezone
+              readOnly: true
+              subPath: timezone
       volumes:
-        - name: data
+        - name: cp210x
+          hostPath:
+            path: /dev/ttyUSB-cp210x
+            type: CharDevice
+        - name: homeassistant-claim0
           persistentVolumeClaim:
-            claimName: home-assistant
+            claimName: homeassistant-claim0
+        - name: homeassistant-claim1
+          persistentVolumeClaim:
+            claimName: homeassistant-claim1
+        - name: homeassistant-cm2
+          configMap:
+            name: homeassistant-cm2
+            items:
+              - key: localtime
+                path: localtime
+        - name: homeassistant-cm3
+          configMap:
+            name: homeassistant-cm3
+            items:
+              - key: timezone
+                path: timezone

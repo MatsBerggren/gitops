@@ -1,3 +1,4 @@
+
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -8,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/MatsBerggren/gitops
     targetRevision: main
-    path: clusters/homelab
+    path: clusters/homelab/root
     directory:
       recurse: true
   destination:
@@ -16,8 +17,24 @@ spec:
     namespace: argocd
   syncPolicy:
     automated:
-      prune: true
-      selfHeal: true
+      prune: false
+      selfHeal: false
     syncOptions:
-      - CreateNamespace=true
       - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
+  ignoreDifferences:
+    - group: ""
+      kind: ConfigMap
+      name: argocd-cm
+      namespace: argocd
+    - group: ""
+      kind: ConfigMap
+      name: argocd-cmd-params-cm
+      namespace: argocd
+    - group: ""
+      kind: Secret
+      name: argocd-secret
+      namespace: argocd
+      jsonPointers:
+        - /data/admin.password
+        - /data/admin.passwordMtime
