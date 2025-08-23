@@ -1,12 +1,12 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: argocd-server-tls
-  namespace: argocd
+  name: rancher-tls
+  namespace: cattle-system
 spec:
-  secretName: argocd-server-tls
+  secretName: rancher-tls
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-dns
   dnsNames:
-    - arg.support4u.se
+    - rancher.support4u.se
