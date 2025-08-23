@@ -1,0 +1,56 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: home-automation
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: root-homelab
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/MatsBerggren/gitops
+        revision: main
+        directories:
+          - path: apps/home-automation/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: home-automation
+      source:
+        repoURL: https://github.com/MatsBerggren/gitops
+        targetRevision: main
+        path: '{{path}}/overlays/homelab'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - RespectIgnoreDifferences=true
+      ignoreDifferences:
+        - group: networking.k8s.io
+          kind: Ingress
+          jsonPointers:
+            - /metadata/annotations/field.cattle.io~1publicEndpoints
+        - group: ""
+          kind: Service
+          jsonPointers:
+            - /metadata/annotations/field.cattle.io~1publicEndpoints
+            - /metadata/annotations/metallb.io~1ip-allocated-from-pool
+            - /spec/clusterIP
+            - /spec/clusterIPs
+            - /spec/healthCheckNodePort
+            - /spec/ports/*/nodePort
+            - /status/loadBalancer
+        - group: apps
+          kind: Deployment
+          jsonPointers:
+            - /spec/template/metadata/annotations/cattle.io~1timestamp
+            - /spec/template/spec/containers/*/resources
+            - /spec/template/spec/initContainers/*/resources

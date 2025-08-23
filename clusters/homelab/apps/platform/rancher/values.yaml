@@ -1,6 +1,0 @@
-# gitops/clusters/homelab/apps/platform/rancher/values.yaml
-hostname: rancher.support4u.se
-ingress:
-  tls:
-    source: secret    # ← berätta för chartet att använda ett befintligt TLS secret
-# (chartet använder då secret-namnet "tls-rancher-ingress" per standard)

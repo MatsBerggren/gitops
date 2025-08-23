@@ -10,31 +10,13 @@ spec:
     repoURL: https://github.com/MatsBerggren/gitops
     targetRevision: main
     path: clusters/homelab/root
-    directory:
-      recurse: true
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
   syncPolicy:
     automated:
-      prune: false
-      selfHeal: false
+      prune: true
+      selfHeal: true
     syncOptions:
+      - CreateNamespace=true
       - ServerSideApply=true
-      - ApplyOutOfSyncOnly=true
-  ignoreDifferences:
-    - group: ""
-      kind: ConfigMap
-      name: argocd-cm
-      namespace: argocd
-    - group: ""
-      kind: ConfigMap
-      name: argocd-cmd-params-cm
-      namespace: argocd
-    - group: ""
-      kind: Secret
-      name: argocd-secret
-      namespace: argocd
-      jsonPointers:
-        - /data/admin.password
-        - /data/admin.passwordMtime
