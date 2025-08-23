@@ -1,0 +1,51 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homeassistant
+  labels:
+    app: homeassistant
+    io.kompose.service: homeassistant
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: homeassistant
+  template:
+    metadata:
+      labels:
+        app: homeassistant
+        io.kompose.service: homeassistant
+    spec:
+      containers:
+        - name: homeassistant
+          image: homeassistant/home-assistant:latest
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          env:
+            - name: TZ
+              value: Europe/Stockholm
+          ports:
+            - { name: http,       containerPort: 8123, protocol: TCP }
+            - { name: coap-udp,   containerPort: 5683, protocol: UDP }
+            - { name: coap-tcp,   containerPort: 5683, protocol: TCP }
+            - { name: tcp-21063,  containerPort: 21063, protocol: TCP }
+            - { name: tcp-1400,   containerPort: 1400, protocol: TCP }
+          volumeMounts:
+            - { name: cp210x,               mountPath: /dev/ttyUSB-cp210x }
+            - { name: homeassistant-config, mountPath: /config }
+            - { name: homeassistant-media,  mountPath: /media/cameras }
+      volumes:
+        - name: cp210x
+          hostPath:
+            path: /dev/ttyUSB-cp210x
+            type: CharDevice
+        - name: homeassistant-config
+          persistentVolumeClaim:
+            claimName: homeassistant-claim0
+        - name: homeassistant-media
+          persistentVolumeClaim:
+            claimName: homeassistant-claim1

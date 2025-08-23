@@ -1,0 +1,19 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: homeassistant
+  labels:
+    app: homeassistant
+    io.kompose.service: homeassistant
+spec:
+  type: LoadBalancer
+  # Justera om din MetalLB-IP är annorlunda
+  loadBalancerIP: 10.10.10.218
+  selector:
+    app: homeassistant
+  ports:
+    - { name: http,      port: 8123,  targetPort: 8123,  protocol: TCP }
+    - { name: coiot,     port: 5683,  targetPort: 5683,  protocol: UDP }
+    - { name: tcp-21063, port: 21063, targetPort: 21063, protocol: TCP }
+    - { name: tcp-1400,  port: 1400,  targetPort: 1400,  protocol: TCP }
