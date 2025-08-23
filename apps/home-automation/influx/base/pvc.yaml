@@ -2,9 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: homeassistant-claim1
-  labels:
-    app: homeassistant
+  name: influxdb-data
 spec:
   accessModes: [ ReadWriteOnce ]
   storageClassName: local-path
