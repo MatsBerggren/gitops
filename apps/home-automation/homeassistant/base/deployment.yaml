@@ -18,8 +18,9 @@ spec:
       labels:
         app: homeassistant
         io.kompose.service: homeassistant
-    nodeSelector:
-      homelab/homeassistant: "true"
+    spec:
+      nodeSelector:
+        homelab/homeassistant: "true"
       containers:
         - name: homeassistant
           image: homeassistant/home-assistant:latest
