@@ -25,7 +25,9 @@ spec:
             - name: TZ
               value: Europe/Stockholm
             - name: ZIGBEE2MQTT_CONFIG_SERIAL_PORT
-              value: /dev/ttyUSB-zigbee
+              value: tcp://10.10.60.100:6638
+            - name: ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER
+              value: ezsp
             - name: ZIGBEE2MQTT_CONFIG_MQTT_SERVER
               value: mqtt://mosquitto.mosquitto.svc.cluster.local:1883
             - name: ZIGBEE2MQTT_CONFIG_MQTT_BASE_TOPIC
@@ -45,7 +47,3 @@ spec:
         - name: zigbee2mqtt-data
           persistentVolumeClaim:
             claimName: zigbee2mqtt-data
-        - name: zigbee-usb
-          hostPath:
-            path: /dev/ttyUSB-zigbee   # byt till din faktiska dongel (t.ex. /dev/ttyUSB0 eller /dev/serial/by-id/...)
-            type: CharDevice
