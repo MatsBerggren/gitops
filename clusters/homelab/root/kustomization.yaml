@@ -4,4 +4,3 @@ kind: Kustomization
 resources:
   - ../projects/project-home-automation.yaml
   - ../applicationsets/home-automation.yaml
-  - ../platform/argocd/overlays/homelab
