@@ -19,6 +19,15 @@ spec:
         app: homeassistant
         io.kompose.service: homeassistant
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - k3s-worker-02
       containers:
         - name: homeassistant
           image: homeassistant/home-assistant:latest
