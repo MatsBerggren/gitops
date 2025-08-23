@@ -1,36 +1,40 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mosquitto
+  labels:
+    app: mosquitto
 spec:
   replicas: 1
   selector:
-    matchLabels: { app: mosquitto }
+    matchLabels:
+      app: mosquitto
   template:
     metadata:
-      labels: { app: mosquitto }
+      labels:
+        app: mosquitto
     spec:
       containers:
         - name: mosquitto
-          image: eclipse-mosquitto:2
+          image: eclipse-mosquitto:2.0
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 1883
+            - name: mqtt
+              containerPort: 1883
+              protocol: TCP
           volumeMounts:
-            - name: data
+            - name: mosquitto-conf
+              mountPath: /mosquitto/config
+            - name: mosquitto-data
               mountPath: /mosquitto/data
-            - name: config
-              mountPath: /mosquitto/config/mosquitto.conf
-              subPath: mosquitto.conf
-            - name: passwd
-              mountPath: /mosquitto/config/passwd
-              subPath: passwd
       volumes:
-        - name: data
+        - name: mosquitto-conf
+          configMap:
+            name: mosquitto-conf
+            items:
+              - key: mosquitto.conf
+                path: mosquitto.conf
+        - name: mosquitto-data
           persistentVolumeClaim:
-            claimName: mosquitto
-        - name: config
-          secret:
-            secretName: mosquitto-config
-        - name: passwd
-          secret:
-            secretName: mosquitto-config
+            claimName: mosquitto-data
