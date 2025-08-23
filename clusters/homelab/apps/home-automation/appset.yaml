@@ -10,19 +10,19 @@ spec:
         repoURL: https://github.com/MatsBerggren/gitops
         revision: main
         directories:
-          - path: apps/home-automation/*/overlays/homelab
+          - path: apps/home-automation/*       # match app directories (e.g. home-assistant, zigbee2mqtt, ...)
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: '{{path.basename}}'                 # now unique per app directory
     spec:
-      project: default
+      project: home-automation                  # use your AppProject
       source:
         repoURL: https://github.com/MatsBerggren/gitops
         targetRevision: main
-        path: '{{path}}'
+        path: '{{path}}/overlays/homelab'       # overlay path for each app
       destination:
         server: https://kubernetes.default.svc
-        namespace: home-automation
+        namespace: '{{path.basename}}'          # or a shared namespace if you prefer
       syncPolicy:
         automated:
           prune: true
