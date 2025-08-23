@@ -41,8 +41,6 @@ spec:
           volumeMounts:
             - name: zigbee2mqtt-data
               mountPath: /app/data
-            - name: zigbee-usb
-              mountPath: /dev/ttyUSB-zigbee
       volumes:
         - name: zigbee2mqtt-data
           persistentVolumeClaim:
