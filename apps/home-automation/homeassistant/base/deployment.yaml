@@ -19,13 +19,7 @@ spec:
         app: homeassistant
         io.kompose.service: homeassistant
     spec:
-      dnsPolicy: None
-      dnsConfig:
-        nameservers: ["10.43.0.10"]
-        options:
-          - name: ndots
-            value: "2"
-          - name: single-request-reopen
+      dnsPolicy: ClusterFirst
       nodeSelector:
         homelab/homeassistant: "true"
       containers:
