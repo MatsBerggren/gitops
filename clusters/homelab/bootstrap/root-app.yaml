@@ -20,3 +20,6 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - Replace=true              # <- viktigt för immutable fält (t.ex. namespace)
+      - PruneLast=true            # <- pruna sist, efter nyskapande
+      - PrunePropagationPolicy=foreground
