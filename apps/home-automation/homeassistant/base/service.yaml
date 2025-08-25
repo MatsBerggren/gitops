@@ -9,6 +9,7 @@ spec:
   type: LoadBalancer
   # Justera om din MetalLB-IP är annorlunda
   loadBalancerIP: 10.10.10.218
+  externalTrafficPolicy: Cluster
   selector:
     app: homeassistant
   ports:
