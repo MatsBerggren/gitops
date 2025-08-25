@@ -19,9 +19,13 @@ spec:
         app: homeassistant
         io.kompose.service: homeassistant
     spec:
-      dnsPolicy: ClusterFirst
+      dnsPolicy: None
       dnsConfig:
         nameservers: ["10.43.0.10"]
+        searches:
+          - home-automation.svc.cluster.local
+          - svc.cluster.local
+          - cluster.local
         options:
           - name: ndots
             value: "2"
