@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: zigbee2mqtt-tls
+spec:
+  secretName: zigbee2mqtt-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns
+  dnsNames:
+    - zigbee2mqtt.support4u.se
