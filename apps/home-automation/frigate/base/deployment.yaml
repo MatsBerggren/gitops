@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frigate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frigate
+  template:
+    metadata:
+      labels:
+        app: frigate
+    spec:
+      containers:
+        - name: frigate
+          image: ghcr.io/blakeblackshear/frigate:stable
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000  # UI/API
+            - containerPort: 8554  # RTSP restream (optional)
+            - containerPort: 8555  # WebRTC (optional)
+          env:
+            - name: FRIGATE_CONFIG_FILE
+              value: /config/config.yml
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: db
+              mountPath: /db
+            - name: media
+              mountPath: /media/frigate
+            - name: shm
+              mountPath: /dev/shm
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "4Gi"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: frigate-config
+        - name: db
+          persistentVolumeClaim:
+            claimName: frigate-db
+        - name: media
+          persistentVolumeClaim:
+            claimName: frigate-media
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi

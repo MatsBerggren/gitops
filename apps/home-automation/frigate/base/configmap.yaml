@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frigate-config
+data:
+  config.yml: |
+    mqtt:
+      host: mosquitto.homeassistant.svc.cluster.local
+      port: 1883
+      topic_prefix: frigate
+      user: ha
+      password: superhemligt
+    database:
+      path: /db/frigate.db
+    detectors:
+      cpu1:
+        type: cpu
+    ffmpeg:
+      hwaccel_args: []
+    go2rtc:
+      streams: {}
+    cameras:
+      example_cam:
+        enabled: false
+        ffmpeg:
+          inputs:
+            - path: rtsp://user:pass@192.168.1.10:554/stream1
+              roles: [detect,record]
+        detect:
+          width: 1280
+          height: 720
+          fps: 5

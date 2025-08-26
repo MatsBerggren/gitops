@@ -1,0 +1,35 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: system-tools
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: root-homelab
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/MatsBerggren/gitops
+        revision: main
+        directories:
+          - path: apps/system-tools/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: system-tools
+      source:
+        repoURL: https://github.com/MatsBerggren/gitops
+        targetRevision: main
+        path: '{{path}}/overlays/homelab'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - RespectIgnoreDifferences=true
