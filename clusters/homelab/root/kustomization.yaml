@@ -4,3 +4,5 @@ kind: Kustomization
 resources:
   - projects/project-home-automation.yaml
   - applicationsets/home-automation.yaml
+  - projects/project-system-tools.yaml
+  - applicationsets/system-tools.yaml
