@@ -61,7 +61,7 @@ spec:
             type: CharDevice
         - name: homeassistant-config
           persistentVolumeClaim:
-            claimName: homeassistant-claim0
+            claimName: homeassistant-config
         - name: homeassistant-media
           persistentVolumeClaim:
             claimName: homeassistant-claim1
