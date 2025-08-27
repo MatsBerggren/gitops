@@ -49,16 +49,16 @@ spec:
             - { name: tcp-1400,   containerPort: 1400, protocol: TCP }
           volumeMounts:
             # Mounta stabila seriella länkar
-            - { name: serial-by-id,         mountPath: /dev/serial/by-id, readOnly: true }
+            - { name: cp210x, mountPath: /dev/ttyUSB0 }
             # Dina befintliga PVC:er
             - { name: homeassistant-config, mountPath: /config }
             - { name: homeassistant-media,  mountPath: /media/cameras }
       volumes:
         # Viktigt: montera katalogen, inte en fil/symlink
-        - name: serial-by-id
+        - name: cp210x
           hostPath:
-            path: /dev/serial/by-id
-            type: Directory
+            path: /dev/ttyUSB0   # byt till rätt enhet
+            type: CharDevice
         - name: homeassistant-config
           persistentVolumeClaim:
             claimName: homeassistant-claim0
