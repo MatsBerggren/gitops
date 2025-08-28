@@ -4,7 +4,7 @@ metadata:
   name: openbao-config
   namespace: openbao
 data:
-  config.tmpl: |
+  config.hcl: |
     # Listener for API + cluster traffic
     listener "tcp" {
       address          = "0.0.0.0:8200"
@@ -12,16 +12,13 @@ data:
       tls_disable      = "true"
     }
 
-    # Explicit addresses required for raft
-    api_addr     = "http://__POD_NAME__.openbao.openbao.svc:8200"
-    cluster_addr = "http://__POD_IP__:8201"
+    # Single-node integrated storage (Raft) -- no retry_join
+    api_addr     = "http://openbao.openbao.svc:8200"
+    cluster_addr = "http://127.0.0.1:8201"
 
     storage "raft" {
       path    = "/data"
-      node_id = "__POD_NAME__"
-      retry_join {
-        leader_api_addr = "http://openbao-0.openbao.openbao.svc:8200"
-      }
+      node_id = "openbao-0"
     }
 
     ui = true

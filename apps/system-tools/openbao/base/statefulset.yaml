@@ -5,7 +5,7 @@ metadata:
   namespace: openbao
 spec:
   serviceName: openbao
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: openbao
@@ -22,41 +22,12 @@ spec:
       initContainers:
         - name: volume-permissions
           image: busybox:1.36
-          command: ['sh','-c','chown -R 1000:1000 /data && chmod -R g+rwX /data']
+          command: ['sh','-c','chown -R 1000:1000 /data && chmod -R u+rwX,g-rwx,o-rwx /data']
           securityContext:
             runAsUser: 0
           volumeMounts:
             - name: data
               mountPath: /data
-        - name: render-config
-          image: busybox:1.36
-          command:
-            - sh
-            - -c
-            - |
-              set -eu
-              cp /etc/openbao/config.tmpl /work/config.hcl
-              sed -i "s#__POD_NAME__#${POD_NAME}#g" /work/config.hcl
-              sed -i "s#__POD_IP__#${POD_IP}#g" /work/config.hcl
-              sed -i "s#__NAMESPACE__#${NAMESPACE}#g" /work/config.hcl
-          env:
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-          volumeMounts:
-            - name: config-tmpl
-              mountPath: /etc/openbao
-            - name: config-rendered
-              mountPath: /work
       containers:
         - name: openbao
           image: ghcr.io/openbao/openbao:latest
@@ -68,44 +39,28 @@ spec:
               name: cluster
           readinessProbe:
             httpGet:
-              path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204&performancestandbyok=true&drsecondarycode=204
+              path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204
               port: 8200
             initialDelaySeconds: 10
             periodSeconds: 5
-            failureThreshold: 12
+            failureThreshold: 30
           livenessProbe:
             httpGet:
-              path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204&performancestandbyok=true&drsecondarycode=204
+              path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204
               port: 8200
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 10
-            failureThreshold: 6
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - |
-                    for i in $(seq 1 60); do
-                      if [ -f /data/vault.db ]; then
-                        chmod 600 /data/vault.db || true
-                        break
-                      fi
-                      sleep 1
-                    done
+            failureThreshold: 12
           volumeMounts:
-            - name: config-rendered
+            - name: config
               mountPath: /etc/openbao
               readOnly: true
             - name: data
               mountPath: /data
       volumes:
-        - name: config-tmpl
+        - name: config
           configMap:
             name: openbao-config
-        - name: config-rendered
-          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data
