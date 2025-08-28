@@ -19,7 +19,6 @@ data:
     storage "raft" {
       path    = "/data"
       node_id = "$(POD_NAME)"
-      # Basic retry-join using ordinal 0 as bootstrap leader
       retry_join {
         leader_api_addr = "http://openbao-0.openbao.$(NAMESPACE).svc:8200"
       }
