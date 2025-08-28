@@ -5,7 +5,7 @@ metadata:
   namespace: openbao
 spec:
   serviceName: openbao
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: openbao
@@ -68,16 +68,32 @@ spec:
               name: cluster
           readinessProbe:
             httpGet:
-              path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204
+              path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204&performancestandbyok=true&drsecondarycode=204
               port: 8200
             initialDelaySeconds: 10
             periodSeconds: 5
+            failureThreshold: 12
           livenessProbe:
             httpGet:
-              path: /v1/sys/health
+              path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204&performancestandbyok=true&drsecondarycode=204
               port: 8200
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 10
+            failureThreshold: 6
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - |
+                    for i in $(seq 1 60); do
+                      if [ -f /data/vault.db ]; then
+                        chmod 600 /data/vault.db || true
+                        break
+                      fi
+                      sleep 1
+                    done
           volumeMounts:
             - name: config-rendered
               mountPath: /etc/openbao
