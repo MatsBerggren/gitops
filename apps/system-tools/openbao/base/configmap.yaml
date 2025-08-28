@@ -5,14 +5,24 @@ metadata:
   namespace: openbao
 data:
   config.hcl: |
+    # Listener for API + cluster traffic
     listener "tcp" {
-      address       = "0.0.0.0:8200"
-      tls_disable   = "true"
+      address          = "0.0.0.0:8200"
+      cluster_address  = "0.0.0.0:8201"
+      tls_disable      = "true"
     }
+
+    # Required for raft clusters
+    api_addr     = "http://$(POD_NAME).openbao.$(NAMESPACE).svc:8200"
+    cluster_addr = "http://$(POD_IP):8201"
 
     storage "raft" {
       path    = "/data"
-      node_id = "$(HOSTNAME)"
+      node_id = "$(POD_NAME)"
+      # Basic retry-join using ordinal 0 as bootstrap leader
+      retry_join {
+        leader_api_addr = "http://openbao-0.openbao.$(NAMESPACE).svc:8200"
+      }
     }
 
     ui = true

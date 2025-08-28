@@ -5,9 +5,13 @@ metadata:
   namespace: openbao
 spec:
   clusterIP: None
+  publishNotReadyAddresses: true
   ports:
     - name: api
       port: 8200
       targetPort: 8200
+    - name: cluster
+      port: 8201
+      targetPort: 8201
   selector:
     app: openbao

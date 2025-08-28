@@ -5,7 +5,8 @@ metadata:
   namespace: openbao
 spec:
   serviceName: openbao
-  replicas: 1
+  replicas: 3
+  podManagementPolicy: Parallel
   selector:
     matchLabels:
       app: openbao
@@ -14,15 +15,42 @@ spec:
       labels:
         app: openbao
     spec:
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: openbao
           image: ghcr.io/openbao/openbao:latest
-          args:
-            - "server"
-            - "-config=/etc/openbao/config.hcl"
+          args: ["server", "-config=/etc/openbao/config.hcl"]
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
           ports:
             - containerPort: 8200
               name: api
+            - containerPort: 8201
+              name: cluster
+          readinessProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204
+              port: 8200
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /v1/sys/health
+              port: 8200
+            initialDelaySeconds: 30
+            periodSeconds: 10
           volumeMounts:
             - name: config
               mountPath: /etc/openbao
@@ -39,5 +67,5 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 10Gi
+            storage: 20Gi
         storageClassName: longhorn
