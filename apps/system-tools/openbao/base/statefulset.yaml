@@ -5,8 +5,7 @@ metadata:
   namespace: openbao
 spec:
   serviceName: openbao
-  replicas: 1
-  podManagementPolicy: Parallel
+  replicas: 3
   selector:
     matchLabels:
       app: openbao
@@ -33,19 +32,6 @@ spec:
         - name: openbao
           image: ghcr.io/openbao/openbao:latest
           args: ["server", "-config=/etc/openbao/config.hcl"]
-          env:
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
           ports:
             - containerPort: 8200
               name: api

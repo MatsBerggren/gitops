@@ -12,15 +12,13 @@ data:
       tls_disable      = "true"
     }
 
-    # Required for raft clusters
-    api_addr     = "http://$(POD_NAME).openbao.$(NAMESPACE).svc:8200"
-    cluster_addr = "http://$(POD_IP):8201"
-
+    # For raft clusters we only need a stable leader address for first join.
+    # Avoid env interpolation by using full pod DNS in the known namespace.
     storage "raft" {
       path    = "/data"
-      node_id = "$(POD_NAME)"
+      node_id = "{{env \"HOSTNAME\"}}"
       retry_join {
-        leader_api_addr = "http://openbao-0.openbao.$(NAMESPACE).svc:8200"
+        leader_api_addr = "http://openbao-0.openbao.openbao.svc:8200"
       }
     }
 
