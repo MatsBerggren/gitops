@@ -9,4 +9,3 @@ resources:
   - service.yaml
   - pvc.yaml
   - configmap.yaml
-  - ingress.yaml
