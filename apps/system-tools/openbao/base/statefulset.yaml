@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: openbao
+  namespace: openbao
+spec:
+  serviceName: openbao
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openbao
+  template:
+    metadata:
+      labels:
+        app: openbao
+    spec:
+      containers:
+        - name: openbao
+          image: ghcr.io/openbao/openbao:latest
+          args:
+            - "server"
+            - "-config=/etc/openbao/config.hcl"
+          ports:
+            - containerPort: 8200
+              name: api
+          volumeMounts:
+            - name: config
+              mountPath: /etc/openbao
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: config
+          configMap:
+            name: openbao-config
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: longhorn
