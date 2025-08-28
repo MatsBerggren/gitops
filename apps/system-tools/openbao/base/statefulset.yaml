@@ -5,7 +5,7 @@ metadata:
   namespace: openbao
 spec:
   serviceName: openbao
-  replicas: 3
+  replicas: 1
   podManagementPolicy: Parallel
   selector:
     matchLabels:
