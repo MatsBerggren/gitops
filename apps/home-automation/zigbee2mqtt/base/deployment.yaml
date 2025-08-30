@@ -22,18 +22,18 @@ spec:
           securityContext:
             privileged: true
           env:
-            - name: TZ
-              value: Europe/Stockholm
-            - name: ZIGBEE2MQTT_CONFIG_SERIAL_PORT
-              value: tcp://10.10.60.100:6638
-            - name: ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER
-              value: ember
-            - name: ZIGBEE2MQTT_CONFIG_MQTT_SERVER
-              value: mqtt://mosquitto:1883
-            - name: ZIGBEE2MQTT_CONFIG_MQTT_BASE_TOPIC
-              value: zigbee2mqtt
-            - name: ZIGBEE2MQTT_CONFIG_FRONTEND_ENABLED
-              value: "true"
+            #- name: TZ
+            #  value: Europe/Stockholm
+            #- name: ZIGBEE2MQTT_CONFIG_SERIAL_PORT
+            #  value: tcp://10.10.60.100:6638
+            #- name: ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER
+            #  value: ember
+            #- name: ZIGBEE2MQTT_CONFIG_MQTT_SERVER
+            #  value: mqtt://mosquitto:1883
+            #- name: ZIGBEE2MQTT_CONFIG_MQTT_BASE_TOPIC
+            #  value: zigbee2mqtt
+            #- name: ZIGBEE2MQTT_CONFIG_FRONTEND_ENABLED
+            #  value: "true"
           ports:
             - name: ui
               containerPort: 8080
