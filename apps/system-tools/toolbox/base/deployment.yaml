@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: toolbox
-          image: ghcr.io/MatsBerggren/toolbox:latest
+          image: ghcr.io/matsberggren/toolbox:3a2f46808e5896e3deaa0d93a8877f47af42947f
           imagePullPolicy: IfNotPresent
           command: ["bash","-lc","sleep infinity"]
           tty: true

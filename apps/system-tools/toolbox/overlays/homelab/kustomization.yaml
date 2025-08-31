@@ -6,5 +6,5 @@ resources:
 patches:
   - path: patch-deployment.yaml
 images:
-  - name: ghcr.io/MatsBerggren/toolbox
-    newTag: latest
+  - name: ghcr.io/matsberggren/toolbox
+    newTag: 3a2f46808e5896e3deaa0d93a8877f47af42947f
