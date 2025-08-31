@@ -19,7 +19,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: avahi
-          image: alpine:3.20
+          image: debian:12-slim
           imagePullPolicy: IfNotPresent
           securityContext:
             capabilities:
@@ -29,15 +29,14 @@ spec:
             - -c
             - |
               set -e
-              apk add --no-cache avahi dbus avahi-compat-libdns_sd
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update
+              apt-get install -y --no-install-recommends avahi-daemon avahi-utils dbus libnss-mdns ca-certificates
+              rm -rf /var/lib/apt/lists/*
               mkdir -p /run/dbus
               dbus-daemon --system --address=unix:path=/run/dbus/system_bus_socket &
-              # Run avahi in foreground (debug keeps it in FG)
-              exec avahi-daemon --no-drop-root --no-chroot -f /config/avahi-daemon.conf --debug
-          ports:
-            - name: mdns
-              containerPort: 5353
-              protocol: UDP
+              # Run avahi in foreground using our config
+              exec avahi-daemon -f /config/avahi-daemon.conf --no-drop-root --no-chroot --debug
           volumeMounts:
             - name: avahi-config
               mountPath: /config/avahi-daemon.conf
