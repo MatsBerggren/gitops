@@ -31,7 +31,7 @@ spec:
         options:
           - { name: ndots, value: "2" }
           - { name: single-request-reopen }
-        nodeSelector:
+      nodeSelector:
         homelab/homeassistant: "true"
       containers:
         - name: homeassistant
