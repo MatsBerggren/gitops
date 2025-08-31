@@ -12,6 +12,10 @@ data:
     allow-interfaces=bond0.10,bond0.50,bond0.60
     deny-interfaces=docker0,virbr*,veth*,cni*,flannel*,kube-ipvs*,lo
 
+    [reflector]
+    enable-reflector=yes
+    reflect-ipv=no
+
     [wide-area]
     enable-wide-area=no
 
@@ -19,17 +23,3 @@ data:
     disable-publishing=yes
     disable-user-service-publishing=yes
     add-service-cookie=no
-
-    [reflector]
-    enable-reflector=yes
-    reflect-ipv=no
-    reflect-filters=_hap._tcp,_esphomelib._tcp,_home-assistant._tcp,_api._udp
-
-    [rlimits]
-    rlimit-as=0
-    rlimit-core=0
-    rlimit-data=4194304
-    rlimit-fsize=0
-    rlimit-nofile=768
-    rlimit-stack=4194304
-    rlimit-nproc=3

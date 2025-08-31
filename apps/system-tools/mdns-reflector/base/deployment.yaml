@@ -30,7 +30,7 @@ spec:
             - |
               set -eu
               export DEBIAN_FRONTEND=noninteractive
-              # Installera beroenden (idempotent), med enkel retry
+              # Installera beroenden (med enkel retry om apt är seg)
               (apt-get update && apt-get install -y --no-install-recommends \
                  avahi-daemon avahi-utils dbus libnss-mdns ca-certificates) \
               || (sleep 3 && apt-get update && apt-get install -y --no-install-recommends \
@@ -40,14 +40,14 @@ spec:
               # Starta system-dbus och vänta på socketen
               mkdir -p /run/dbus
               dbus-daemon --system --address=unix:path=/run/dbus/system_bus_socket
-              for i in $(seq 1 20); do
+              for i in $(seq 1 40); do
                 [ -S /run/dbus/system_bus_socket ] && break
-                sleep 0.5
+                sleep 0.25
               done
               [ -S /run/dbus/system_bus_socket ] || { echo "DBus socket not found"; exit 1; }
 
-              # Starta Avahi i förgrunden med vår config
-              exec avahi-daemon -f /config/avahi-daemon.conf --no-drop-root --no-chroot --debug
+              # Starta Avahi i förgrunden med vår config (utan debug)
+              exec avahi-daemon -f /config/avahi-daemon.conf --no-drop-root --no-chroot
           volumeMounts:
             - name: avahi-config
               mountPath: /config/avahi-daemon.conf
