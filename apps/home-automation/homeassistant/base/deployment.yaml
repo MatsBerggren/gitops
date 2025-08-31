@@ -18,18 +18,8 @@ spec:
         app: homeassistant
         io.kompose.service: homeassistant
     spec:
-      # (valfritt men bra för HA/mDNS/SSDP): hostNetwork: true
-      dnsPolicy: None
-      dnsConfig:
-        nameservers: ["10.43.0.10"]
-        searches:
-          - home-automation.svc.cluster.local
-          - svc.cluster.local
-          - cluster.local
-        options:
-          - name: ndots
-            value: "2"
-          - name: single-request-reopen
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       nodeSelector:
         homelab/homeassistant: "true"
       containers:
