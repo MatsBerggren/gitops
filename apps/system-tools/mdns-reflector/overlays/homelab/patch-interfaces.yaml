@@ -10,7 +10,7 @@ data:
     use-ipv4=yes
     use-ipv6=no
     enable-reflector=yes
-    allow-interfaces=INTERFACE_SERVER,INTERFACE_IOT
+    allow-interfaces=bond0.10,bond0.50,bond0.60
     deny-interfaces=docker0,virbr*,veth*,cni*,flannel*,kube-ipvs*,lo
 
     [wide-area]

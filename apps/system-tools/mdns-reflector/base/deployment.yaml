@@ -19,11 +19,21 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: avahi
-          image: lscr.io/linuxserver/avahi:latest
+          image: alpine:3.20
           imagePullPolicy: IfNotPresent
           securityContext:
             capabilities:
               add: ["NET_RAW"]
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              apk add --no-cache avahi dbus avahi-compat-libdns_sd
+              mkdir -p /run/dbus
+              dbus-daemon --system --address=unix:path=/run/dbus/system_bus_socket &
+              # Run avahi in foreground (debug keeps it in FG)
+              exec avahi-daemon --no-drop-root --no-chroot -f /config/avahi-daemon.conf --debug
           ports:
             - name: mdns
               containerPort: 5353
@@ -34,10 +44,8 @@ spec:
               subPath: avahi-daemon.conf
               readOnly: true
           env:
-            - name: PUID
-              value: "0"
-            - name: PGID
-              value: "0"
+            - name: TZ
+              value: Europe/Stockholm
       volumes:
         - name: avahi-config
           configMap:
