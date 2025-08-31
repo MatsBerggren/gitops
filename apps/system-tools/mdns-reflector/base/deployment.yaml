@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdns-reflector
+  namespace: network
+  labels:
+    app: mdns-reflector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mdns-reflector
+  template:
+    metadata:
+      labels:
+        app: mdns-reflector
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: avahi
+          image: lscr.io/linuxserver/avahi:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add: ["NET_RAW"]
+          ports:
+            - name: mdns
+              containerPort: 5353
+              protocol: UDP
+          volumeMounts:
+            - name: avahi-config
+              mountPath: /config/avahi-daemon.conf
+              subPath: avahi-daemon.conf
+              readOnly: true
+          env:
+            - name: PUID
+              value: "0"
+            - name: PGID
+              value: "0"
+      volumes:
+        - name: avahi-config
+          configMap:
+            name: avahi-config
+            items:
+              - key: avahi-daemon.conf
+                path: avahi-daemon.conf
