@@ -26,18 +26,23 @@ spec:
               add: ["NET_RAW"]
           command:
             - /bin/sh
-            - -c
+            - -ce
             - |
-              set -e
+              set -eu
               export DEBIAN_FRONTEND=noninteractive
-              apt-get update
-              apt-get install -y --no-install-recommends avahi-daemon avahi-utils dbus libnss-mdns ca-certificates
-              rm -rf /var/lib/apt/lists/*
+              # Säkerställ katalogen och starta dbus
               mkdir -p /run/dbus
-              dbus-daemon --system --address=unix:path=/run/dbus/system_bus_socket &
-              # Run avahi in foreground using our config
-              exec avahi-daemon -f /config/avahi-daemon.conf --no-drop-root --no-chroot --debug
-          volumeMounts:
+              dbus-daemon --system --address=unix:path=/run/dbus/system_bus_socket
+              # Vänta på att dbus-socket finns (max ~10s)
+              for i in $(seq 1 20); do
+                [ -S /run/dbus/system_bus_socket ] && break
+                sleep 0.5
+              done
+              if [ ! -S /run/dbus/system_bus_socket ]; then
+                echo "DBus socket not found, exiting"; exit 1
+              fi
+              # Starta Avahi i förgrunden med vår config
+              exec avahi-daemon -f /config/avahi-daemon.conf --no-drop-root --no-chroot --debug          volumeMounts:
             - name: avahi-config
               mountPath: /config/avahi-daemon.conf
               subPath: avahi-daemon.conf
