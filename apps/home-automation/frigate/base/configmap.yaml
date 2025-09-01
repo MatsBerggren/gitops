@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: frigate-config
 data:
-  config.yml: |
+  config.yaml: |
     mqtt:
       enabled: true
       host: mosquitto

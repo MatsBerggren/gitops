@@ -22,10 +22,11 @@ spec:
             - containerPort: 8555  # WebRTC (optional)
           env:
             - name: FRIGATE_CONFIG_FILE
-              value: /config/config.yml
+              value: /config/config.yaml
           volumeMounts:
             - name: config-file
-              mountPath: /config/config.yml
+              mountPath: /config/config.yaml
+              subPath: config.yaml
             - name: config
               mountPath: /config
             - name: db
