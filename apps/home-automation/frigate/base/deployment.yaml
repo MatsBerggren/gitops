@@ -22,8 +22,10 @@ spec:
             - containerPort: 8555  # WebRTC (optional)
           env:
             - name: FRIGATE_CONFIG_FILE
-              value: /config/config.yml
+              value: /config/configmap/config.yml
           volumeMounts:
+            - name: config-file
+              mountPath: /config/configmap
             - name: config
               mountPath: /config
             - name: db
@@ -40,9 +42,12 @@ spec:
               cpu: "2000m"
               memory: "4Gi"
       volumes:
-        - name: config
-          configMap:
+        - name: config-file
+          conigMap:
             name: frigate-config
+        - name: config
+          persistentVolumeClaim:
+            claimName: frigate-config
         - name: db
           persistentVolumeClaim:
             claimName: frigate-db
