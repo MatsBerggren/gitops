@@ -41,8 +41,8 @@ spec:
               memory: "4Gi"
       volumes:
         - name: config
-          persistentVolumeClaim:
-            claimName: frigate-config
+          configMap:
+            name: frigate-config
         - name: db
           persistentVolumeClaim:
             claimName: frigate-db
