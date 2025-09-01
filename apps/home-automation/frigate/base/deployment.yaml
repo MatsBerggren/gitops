@@ -43,7 +43,7 @@ spec:
               memory: "4Gi"
       volumes:
         - name: config-file
-          conigMap:
+          configMap:
             name: frigate-config
         - name: config
           persistentVolumeClaim:
