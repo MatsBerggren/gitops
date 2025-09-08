@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: system-tools
+  name: support
   namespace: argocd
   labels:
     app.kubernetes.io/instance: root-homelab
