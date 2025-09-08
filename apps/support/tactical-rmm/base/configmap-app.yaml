@@ -4,8 +4,8 @@ metadata:
   name: tactical-rmm-config
 data:
   TIME_ZONE: "Europe/Stockholm"
-  DJANGO_ALLOWED_HOSTS: "rmm.example.com,api.rmm.example.com"
-  RMM_URL: "https://rmm.example.com"
-  API_URL: "https://api.rmm.example.com"
-  MESH_HOST: "https://mesh.example.com"
+  DJANGO_ALLOWED_HOSTS: "rmm.support4u.se,api.rmm.support4u.se"
+  RMM_URL: "https://rmm.support4u.se"
+  API_URL: "https://api.rmm.support4u.se"
+  MESH_HOST: "https://mesh.support4u.se"
   LOG_LEVEL: "INFO"

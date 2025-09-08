@@ -4,20 +4,20 @@ metadata:
   name: tactical-rmm
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-cloudflare"
+    cert-manager.io/cluster-issuer: "letsencrypt-dns"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
 spec:
   ingressClassName: nginx
   tls:
-    - hosts: ["rmm.example.com"]
+    - hosts: ["rmm.support4u.se"]
       secretName: rmm-tls
-    - hosts: ["api.rmm.example.com"]
+    - hosts: ["api.rmm.support4u.se"]
       secretName: rmm-api-tls
-    - hosts: ["mesh.example.com"]
+    - hosts: ["mesh.support4u.se"]
       secretName: mesh-tls
   rules:
-    - host: rmm.example.com
+    - host: rmm.support4u.se
       http:
         paths:
           - path: /
@@ -27,7 +27,7 @@ spec:
                 name: rmm-web
                 port:
                   number: 8080
-    - host: api.rmm.example.com
+    - host: api.rmm.support4u.se
       http:
         paths:
           - path: /
@@ -37,7 +37,7 @@ spec:
                 name: rmm-api
                 port:
                   number: 8000
-    - host: mesh.example.com
+    - host: mesh.support4u.se
       http:
         paths:
           - path: /

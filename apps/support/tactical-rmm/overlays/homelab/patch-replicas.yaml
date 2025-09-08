@@ -3,28 +3,28 @@ kind: Deployment
 metadata:
   name: rmm-api
 spec:
-  replicas: 2
+  replicas: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rmm-daphne
 spec:
-  replicas: 2
+  replicas: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rmm-nginx
 spec:
-  replicas: 2
+  replicas: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rmm-celery
 spec:
-  replicas: 2
+  replicas: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
