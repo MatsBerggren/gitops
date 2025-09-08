@@ -6,3 +6,5 @@ resources:
   - applicationsets/home-automation.yaml
   - projects/project-system-tools.yaml
   - applicationsets/system-tools.yaml
+  - projects/project-support.yaml
+  - applicationsets/support.yaml

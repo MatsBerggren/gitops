@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  ports:
+    - name: pg
+      port: 5432
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: bitnami/postgresql:16
+          env:
+            - name: POSTGRESQL_DATABASE
+              valueFrom: { secretKeyRef: { name: tactical-rmm-secret, key: DB_NAME } }
+            - name: POSTGRESQL_USERNAME
+              valueFrom: { secretKeyRef: { name: tactical-rmm-secret, key: DB_USER } }
+            - name: POSTGRESQL_PASSWORD
+              valueFrom: { secretKeyRef: { name: tactical-rmm-secret, key: DB_PASSWORD } }
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/postgresql
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE -h 127.0.0.1 -p 5432"]
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U $POSTGRESQL_USERNAME -d $POSTGRESQL_DATABASE -h 127.0.0.1 -p 5432"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 20Gi

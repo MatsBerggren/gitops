@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rmm-celery
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: rmm-celery }
+  template:
+    metadata:
+      labels: { app: rmm-celery }
+    spec:
+      containers:
+        - name: celery
+          image: ghcr.io/amidaware/tacticalrmm-celery:latest
+          envFrom:
+            - configMapRef: { name: tactical-rmm-config }
+            - secretRef: { name: tactical-rmm-secret }
+          env:
+            - name: DATABASE_URL
+              value: "postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
+            - name: REDIS_URL
+              value: "redis://$(REDIS_HOST):$(REDIS_PORT)/0"
+          livenessProbe:
+            exec:
+              command: ["sh","-c","celery -A api inspect ping -d celery@$(hostname) || exit 1"]
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            exec:
+              command: ["sh","-c","celery -A api inspect ping -d celery@$(hostname) || exit 1"]
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"

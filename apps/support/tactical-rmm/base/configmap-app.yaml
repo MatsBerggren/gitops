@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tactical-rmm-config
+data:
+  TIME_ZONE: "Europe/Stockholm"
+  DJANGO_ALLOWED_HOSTS: "rmm.example.com,api.rmm.example.com"
+  RMM_URL: "https://rmm.example.com"
+  API_URL: "https://api.rmm.example.com"
+  MESH_HOST: "https://mesh.example.com"
+  LOG_LEVEL: "INFO"

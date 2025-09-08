@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tactical-rmm-config
+data:
+  DJANGO_ALLOWED_HOSTS: "rmm.support4u.se,api.rmm.support4u.se"
+  RMM_URL: "https://rmm.support4u.se"
+  API_URL: "https://api.rmm.support4u.se"
+  MESH_HOST: "https://mesh.support4u.se"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tactical-rmm
+spec:
+  tls:
+    - hosts: ["rmm.support4u.se"]
+      secretName: rmm-support4u-tls
+    - hosts: ["api.rmm.support4u.se"]
+      secretName: rmm-api-support4u-tls
+    - hosts: ["mesh.support4u.se"]
+      secretName: mesh-support4u-tls
+  rules:
+    - host: rmm.support4u.se
+    - host: api.rmm.support4u.se
+    - host: mesh.support4u.se

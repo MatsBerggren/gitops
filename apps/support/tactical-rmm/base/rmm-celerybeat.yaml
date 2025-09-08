@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rmm-celerybeat
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: rmm-celerybeat }
+  template:
+    metadata:
+      labels: { app: rmm-celerybeat }
+    spec:
+      containers:
+        - name: celerybeat
+          image: ghcr.io/amidaware/tacticalrmm-celerybeat:latest
+          envFrom:
+            - configMapRef: { name: tactical-rmm-config }
+            - secretRef: { name: tactical-rmm-secret }
+          env:
+            - name: DATABASE_URL
+              value: "postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
+            - name: REDIS_URL
+              value: "redis://$(REDIS_HOST):$(REDIS_PORT)/0"
+          livenessProbe:
+            exec:
+              command: ["sh","-c","ps aux | grep -v grep | grep -q 'celery beat'"]
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          readinessProbe:
+            exec:
+              command: ["sh","-c","ps aux | grep -v grep | grep -q 'celery beat'"]
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

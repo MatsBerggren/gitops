@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tactical-rmm-config
+data:
+  DJANGO_ALLOWED_HOSTS: "rmm.support4u.se,api.rmm.support4u.se"
+  RMM_URL: "https://rmm.support4u.se"
+  API_URL: "https://api.rmm.support4u.se"
+  MESH_HOST: "https://mesh.support4u.se"

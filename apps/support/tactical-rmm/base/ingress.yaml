@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tactical-rmm
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-cloudflare"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: ["rmm.example.com"]
+      secretName: rmm-tls
+    - hosts: ["api.rmm.example.com"]
+      secretName: rmm-api-tls
+    - hosts: ["mesh.example.com"]
+      secretName: mesh-tls
+  rules:
+    - host: rmm.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rmm-web
+                port:
+                  number: 8080
+    - host: api.rmm.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rmm-api
+                port:
+                  number: 8000
+    - host: mesh.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: meshcentral
+                port:
+                  number: 443
