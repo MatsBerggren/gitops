@@ -22,8 +22,6 @@ spec:
         repoURL: https://github.com/MatsBerggren/gitops
         targetRevision: main
         path: '{{path}}/overlays/homelab'
-        kustomize:
-          buildOptions: --enable-helm
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{path.basename}}'
