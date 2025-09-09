@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: trmm-init
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels: { app: trmm-init }
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: trmm-init
+        image: "$(IMAGE_REPO)tactical:$(VERSION)"
+        command: ["tactical-init"]
+        envFrom:
+        - configMapRef: { name: trmm-config }
+        - secretRef: { name: trmm-secrets }
+        volumeMounts:
+        - { name: trmm-data, mountPath: /opt/tactical }
+      volumes:
+      - name: trmm-data
+        persistentVolumeClaim: { claimName: trmm-data-pvc }

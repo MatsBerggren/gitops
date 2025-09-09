@@ -1,24 +1,34 @@
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: postgres
-spec:
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        storageClassName: longhorn
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: rmm-data-pvc
+  name: trmm-postgres-pvc
 spec:
   storageClassName: longhorn
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: meshcentral-pvc
+  name: trmm-redis-pvc
+spec:
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: trmm-mongo-pvc
+spec:
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: trmm-mesh-data-pvc
+spec:
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: trmm-data-pvc
 spec:
   storageClassName: longhorn

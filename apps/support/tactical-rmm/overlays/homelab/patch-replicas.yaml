@@ -1,34 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rmm-api
+  name: trmm-frontend
 spec:
   replicas: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rmm-daphne
+  name: trmm-backend
 spec:
   replicas: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rmm-nginx
+  name: trmm-websockets
 spec:
   replicas: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rmm-celery
+  name: trmm-celery
 spec:
   replicas: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rmm-celerybeat
+  name: trmm-celerybeat
+spec:
+  replicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trmm-nginx
 spec:
   replicas: 1

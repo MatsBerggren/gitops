@@ -4,13 +4,20 @@ namespace: tactical-rmm
 
 resources:
   - namespace.yaml
-  - configmap-app.yaml
+  - configmap-env.yaml
+  - secret-env.yaml
+  - storage.yaml
   - postgres.yaml
   - redis.yaml
+  - mongodb.yaml
+  - nats.yaml
   - meshcentral.yaml
-  - rmm-api.yaml
-  - rmm-daphne.yaml
-  - rmm-celery.yaml
-  - rmm-celerybeat.yaml
-  - rmm-nginx.yaml
+  - backend.yaml
+  - websockets.yaml
+  - celery.yaml
+  - celerybeat.yaml
+  - frontend.yaml
+  - nginx.yaml
+  - init-job.yaml
+  - services.yaml
   - ingress.yaml

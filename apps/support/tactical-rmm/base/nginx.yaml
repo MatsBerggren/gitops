@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trmm-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: trmm-nginx }
+  template:
+    metadata:
+      labels: { app: trmm-nginx }
+    spec:
+      containers:
+      - name: nginx
+        image: "$(IMAGE_REPO)tactical-nginx:$(VERSION)"
+        env:
+        - name: APP_HOST
+          valueFrom: { configMapKeyRef: { name: trmm-config, key: APP_HOST } }
+        - name: API_HOST
+          valueFrom: { configMapKeyRef: { name: trmm-config, key: API_HOST } }
+        - name: MESH_HOST
+          valueFrom: { configMapKeyRef: { name: trmm-config, key: MESH_HOST } }
+        - name: CERT_PUB_KEY
+          valueFrom: { secretKeyRef: { name: trmm-secrets, key: CERT_PUB_KEY } }
+        - name: CERT_PRIV_KEY
+          valueFrom: { secretKeyRef: { name: trmm-secrets, key: CERT_PRIV_KEY } }
+        ports:
+        - { name: http, containerPort: 8080 }
+        - { name: https, containerPort: 4443 }
+        volumeMounts:
+        - { name: trmm-data, mountPath: /opt/tactical }
+      volumes:
+      - name: trmm-data
+        persistentVolumeClaim: { claimName: trmm-data-pvc }

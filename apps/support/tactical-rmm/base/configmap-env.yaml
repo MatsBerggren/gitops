@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trmm-config
+data:
+  TIME_ZONE: "Europe/Stockholm"
+  LOG_LEVEL: "INFO"
+
+  # Hostnames (FQDNs). All must be same wildcard level per upstream docs.
+  APP_HOST: "rmm.example.com"
+  API_HOST: "api.example.com"
+  MESH_HOST: "mesh.example.com"
+
+  # Feature toggles (string "0" or "1")
+  TRMM_DISABLE_WEB_TERMINAL: "0"
+  TRMM_DISABLE_SERVER_SCRIPTS: "0"
+  TRMM_DISABLE_SSO: "1"
+
+  # Image version tag; change to a concrete release like "v1.2.0" if desired
+  VERSION: "latest"
+
+  # Optional: set to "$(IMAGE_REPO)" (default). You can fork or mirror if needed.
+  IMAGE_REPO: "docker.io/tacticalrmm/"

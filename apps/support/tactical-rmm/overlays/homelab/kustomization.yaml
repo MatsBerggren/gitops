@@ -4,6 +4,6 @@ namespace: tactical-rmm
 resources:
   - ../../base
 patches:
-  - path: patch-hosts.yaml
   - path: patch-replicas.yaml
   - path: patch-storageclass.yaml
+  - path: patch-hosts.yaml

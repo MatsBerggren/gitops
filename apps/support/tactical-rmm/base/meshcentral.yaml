@@ -1,66 +1,48 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: meshcentral
-spec:
-  selector:
-    app: meshcentral
-  ports:
-    - name: https
-      port: 443
-      targetPort: 443
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: meshcentral
+  name: trmm-meshcentral
 spec:
   replicas: 1
   selector:
-    matchLabels: { app: meshcentral }
+    matchLabels: { app: trmm-meshcentral }
   template:
     metadata:
-      labels: { app: meshcentral }
+      labels: { app: trmm-meshcentral }
     spec:
-      imagePullSecrets:
-        - name: ghcr-cred
+      securityContext:
+        fsGroup: 1000
       containers:
-        - name: meshcentral
-          image: ghcr.io/ylianst/meshcentral:latest
-          ports:
-            - containerPort: 443
-          env:
-            - name: HOSTNAME
-              valueFrom: { configMapKeyRef: { name: tactical-rmm-config, key: MESH_HOST } }
-          volumeMounts:
-            - name: mesh-data
-              mountPath: /opt/meshcentral/meshcentral-data
-          livenessProbe:
-            tcpSocket: { port: 443 }
-            initialDelaySeconds: 20
-            periodSeconds: 10
-          readinessProbe:
-            tcpSocket: { port: 443 }
-            initialDelaySeconds: 10
-            periodSeconds: 10
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "256Mi"
-            limits:
-              cpu: "1"
-              memory: "1Gi"
+      - name: meshcentral
+        image: "$(IMAGE_REPO)tactical-meshcentral:$(VERSION)"
+        env:
+        - name: MESH_HOST
+          valueFrom: { configMapKeyRef: { name: trmm-config, key: MESH_HOST } }
+        - name: MESH_USER
+          valueFrom: { secretKeyRef: { name: trmm-secrets, key: MESH_USER } }
+        - name: MESH_PASS
+          valueFrom: { secretKeyRef: { name: trmm-secrets, key: MESH_PASS } }
+        - name: MONGODB_USER
+          valueFrom: { secretKeyRef: { name: trmm-secrets, key: MONGODB_USER } }
+        - name: MONGODB_PASSWORD
+          valueFrom: { secretKeyRef: { name: trmm-secrets, key: MONGODB_PASSWORD } }
+        - name: MESH_PERSISTENT_CONFIG
+          value: "0"
+        ports:
+        - { name: https, containerPort: 443 }
+        volumeMounts:
+        - { name: trmm-data, mountPath: /opt/tactical }
+        - { name: mesh-data, mountPath: /home/node/app/meshcentral-data }
       volumes:
-        - name: mesh-data
-          persistentVolumeClaim:
-            claimName: meshcentral-pvc
+      - name: trmm-data
+        persistentVolumeClaim: { claimName: trmm-data-pvc }
+      - name: mesh-data
+        persistentVolumeClaim: { claimName: trmm-mesh-data-pvc }
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: Service
 metadata:
-  name: meshcentral-pvc
+  name: trmm-meshcentral
 spec:
-  accessModes: ["ReadWriteOnce"]
-  resources:
-    requests:
-      storage: 10Gi
+  selector: { app: trmm-meshcentral }
+  ports: [{ name: https, port: 443, targetPort: 443 }]

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trmm-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: trmm-frontend }
+  template:
+    metadata:
+      labels: { app: trmm-frontend }
+    spec:
+      containers:
+      - name: frontend
+        image: "$(IMAGE_REPO)tactical-frontend:$(VERSION)"
+        env:
+        - name: API_HOST
+          valueFrom: { configMapKeyRef: { name: trmm-config, key: API_HOST } }
+        volumeMounts:
+        - { name: trmm-data, mountPath: /opt/tactical }
+      volumes:
+      - name: trmm-data
+        persistentVolumeClaim: { claimName: trmm-data-pvc }
