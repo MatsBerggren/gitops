@@ -10,6 +10,12 @@ spec:
     metadata:
       labels: { app: trmm-nginx }
     spec:
+      initContainers:
+      - name: init-certs-dir
+        image: docker.io/library/alpine:3.20
+        command: ["sh","-c","mkdir -p /opt/tactical/certs && chown -R 101:101 /opt/tactical || true"]
+        volumeMounts:
+        - { name: trmm-data, mountPath: /opt/tactical }
       containers:
       - name: nginx
         image: docker.io/tacticalrmm/tactical-nginx:latest
