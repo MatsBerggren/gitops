@@ -21,6 +21,8 @@ spec:
           valueFrom: { secretKeyRef: { name: trmm-secrets, key: POSTGRES_USER } }
         - name: POSTGRES_PASSWORD
           valueFrom: { secretKeyRef: { name: trmm-secrets, key: POSTGRES_PASS } }
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         ports: [{ name: pg, containerPort: 5432 }]
         volumeMounts:
         - name: data
