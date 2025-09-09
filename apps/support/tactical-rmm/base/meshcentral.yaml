@@ -22,6 +22,8 @@ spec:
     metadata:
       labels: { app: meshcentral }
     spec:
+      imagePullSecrets:
+        - name: ghcr-cred
       containers:
         - name: meshcentral
           image: ghcr.io/ylianst/meshcentral:latest
