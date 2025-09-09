@@ -20,6 +20,8 @@ spec:
     metadata:
       labels: { app: rmm-api }
     spec:
+      imagePullSecrets:
+        - name: ghcr-cred
       containers:
         - name: rmm-api
           image: ghcr.io/amidaware/tacticalrmm:latest

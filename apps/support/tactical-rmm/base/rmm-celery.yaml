@@ -10,6 +10,8 @@ spec:
     metadata:
       labels: { app: rmm-celery }
     spec:
+      imagePullSecrets:
+        - name: ghcr-cred
       containers:
         - name: celery
           image: ghcr.io/amidaware/tacticalrmm-celery:latest

@@ -20,6 +20,8 @@ spec:
     metadata:
       labels: { app: rmm-daphne }
     spec:
+      imagePullSecrets:
+        - name: ghcr-cred
       containers:
         - name: daphne
           image: ghcr.io/amidaware/tacticalrmm-daphne:latest

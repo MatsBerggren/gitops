@@ -20,6 +20,8 @@ spec:
     metadata:
       labels: { app: rmm-nginx }
     spec:
+      imagePullSecrets:
+        - name: ghcr-cred
       containers:
         - name: nginx
           image: ghcr.io/amidaware/tacticalrmm-nginx:latest
