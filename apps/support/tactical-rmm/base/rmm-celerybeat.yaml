@@ -14,7 +14,7 @@ spec:
         - name: ghcr-cred
       containers:
         - name: celerybeat
-          image: ghcr.io/amidaware/tacticalrmm-celerybeat:latest
+          image: tacticalrmm/tactical:latest
           envFrom:
             - configMapRef: { name: tactical-rmm-config }
             - secretRef: { name: tactical-rmm-secret }
