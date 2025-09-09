@@ -8,7 +8,7 @@ metadata:
     # Otherwise, leave TLS to tactical-nginx and use the LoadBalancer service.
 spec:
   rules:
-  - host: rmm.example.com
+  - host: mesh.support4u.se
     http:
       paths:
       - path: /
@@ -36,5 +36,5 @@ spec:
             name: trmm-nginx-svc
             port: { number: 80 }
   # tls:
-  # - hosts: ["rmm.example.com","api.example.com","mesh.example.com"]
+  # - hosts: ["rmm.support4u.se","api.rmm.support4u.se","mesh.example.com", "mesh.support4u.se"]
   #   secretName: trmm-wildcard-tls

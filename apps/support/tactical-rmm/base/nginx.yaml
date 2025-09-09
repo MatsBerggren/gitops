@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: "$(IMAGE_REPO)tactical-nginx:$(VERSION)"
+        image: docker.io/tacticalrmm/tactical-nginx:latest
         env:
         - name: APP_HOST
           valueFrom: { configMapKeyRef: { name: trmm-config, key: APP_HOST } }

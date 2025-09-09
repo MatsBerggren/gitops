@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: trmm-config
 data:
-  APP_HOST: "rmm.homelab.local"
-  API_HOST: "api.homelab.local"
-  MESH_HOST: "mesh.homelab.local"
+  APP_HOST: "rmm.support4u.se"
+  API_HOST: "api.rmm.support4u.se"
+  MESH_HOST: "mesh.support4u.se"

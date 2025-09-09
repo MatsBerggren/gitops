@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: "$(IMAGE_REPO)tactical-frontend:$(VERSION)"
+        image: docker.io/tacticalrmm/tactical-frontend:latest
         env:
         - name: API_HOST
           valueFrom: { configMapKeyRef: { name: trmm-config, key: API_HOST } }

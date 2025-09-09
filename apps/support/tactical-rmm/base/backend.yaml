@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: "$(IMAGE_REPO)tactical:$(VERSION)"
+        image: docker.io/tacticalrmm/tactical:latest
         command: ["tactical-backend"]
         envFrom:
         - configMapRef: { name: trmm-config }

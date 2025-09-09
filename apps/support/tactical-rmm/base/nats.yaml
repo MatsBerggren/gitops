@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: tactical-nats
-        image: "$(IMAGE_REPO)tactical-nats:$(VERSION)"
+        image: docker.io/tacticalrmm/tactical-nats:latest
         env:
         - name: API_HOST
           valueFrom: { configMapKeyRef: { name: trmm-config, key: API_HOST } }

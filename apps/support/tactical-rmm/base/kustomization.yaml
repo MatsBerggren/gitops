@@ -21,3 +21,15 @@ resources:
   - init-job.yaml
   - services.yaml
   - ingress.yaml
+
+images:
+  - name: docker.io/tacticalrmm/tactical
+    newTag: latest
+  - name: docker.io/tacticalrmm/tactical-frontend
+    newTag: latest
+  - name: docker.io/tacticalrmm/tactical-nginx
+    newTag: latest
+  - name: docker.io/tacticalrmm/tactical-nats
+    newTag: latest
+  - name: docker.io/tacticalrmm/tactical-meshcentral
+    newTag: latest
