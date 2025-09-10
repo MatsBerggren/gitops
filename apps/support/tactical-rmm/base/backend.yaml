@@ -13,7 +13,6 @@ spec:
       containers:
       - name: backend
         image: docker.io/tacticalrmm/tactical:1.2.0
-        # command: ["tactical-backend"]
         envFrom:
         - configMapRef: { name: trmm-config }
         - secretRef: { name: trmm-secrets }

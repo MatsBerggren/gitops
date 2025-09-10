@@ -12,7 +12,6 @@ spec:
       containers:
       - name: trmm-init
         image: docker.io/tacticalrmm/tactical:1.2.0
-        command: ["tactical-init"]
         envFrom:
         - configMapRef: { name: trmm-config }
         - secretRef: { name: trmm-secrets }

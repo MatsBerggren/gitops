@@ -13,7 +13,6 @@ spec:
       containers:
       - name: celery
         image: docker.io/tacticalrmm/tactical:1.2.0
-        command: ["tactical-celery"]
         env:
         - name: REDIS_HOST
           value: "trmm-redis"
