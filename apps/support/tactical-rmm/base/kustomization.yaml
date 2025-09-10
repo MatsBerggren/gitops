@@ -24,12 +24,12 @@ resources:
 
 images:
   - name: docker.io/tacticalrmm/tactical
-    newTag: :1.2.0
+    newTag: 1.2.0
   - name: docker.io/tacticalrmm/tactical-frontend
-    newTag: :1.2.0
+    newTag: 1.2.0
   - name: docker.io/tacticalrmm/tactical-nginx
-    newTag: :1.2.0
+    newTag: 1.2.0
   - name: docker.io/tacticalrmm/tactical-nats
-    newTag: :1.2.0
+    newTag: 1.2.0
   - name: docker.io/tacticalrmm/tactical-meshcentral
-    newTag: :1.2.0
+    newTag: 1.2.0
