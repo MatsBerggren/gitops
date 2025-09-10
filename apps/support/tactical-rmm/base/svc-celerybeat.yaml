@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: trmm-celerybeat
+spec:
+  selector: { app: trmm-celerybeat }
+  ports:
+  - name: http
+    port: 23333
+    targetPort: 23333

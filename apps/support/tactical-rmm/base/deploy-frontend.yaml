@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trmm-frontend
+  labels: { app: trmm-frontend }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: trmm-frontend }
+  template:
+    metadata:
+      labels: { app: trmm-frontend }
+    spec:
+      containers:
+      - name: frontend
+        image: docker.io/tacticalrmm/tactical-nginx:v1.2.0
+        ports:
+        - name: http
+          containerPort: 80
+        envFrom:
+        - configMapRef: { name: trmm-config }
+        - secretRef:    { name: trmm-secrets }
