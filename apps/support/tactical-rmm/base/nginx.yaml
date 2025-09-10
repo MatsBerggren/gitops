@@ -18,7 +18,7 @@ spec:
         - { name: trmm-data, mountPath: /opt/tactical }
       containers:
       - name: nginx
-        image: docker.io/tacticalrmm/tactical-nginx:latest
+        image: docker.io/tacticalrmm/tactical-nginx:1.2.0
         env:
         - name: APP_HOST
           valueFrom: { configMapKeyRef: { name: trmm-config, key: APP_HOST } }
