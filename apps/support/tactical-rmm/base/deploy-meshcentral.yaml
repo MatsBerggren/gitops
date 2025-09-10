@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: meshcentral
-        image: docker.io/tacticalrmm/meshcentral:1.1.21
+        image: docker.io/tacticalrmm/tactical-meshcentral:1.2.0
         ports:
         - name: https
           containerPort: 4443
