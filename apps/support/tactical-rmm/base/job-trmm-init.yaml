@@ -11,7 +11,7 @@ spec:
       restartPolicy: OnFailure
       containers:
       - name: init
-        image: docker.io/tacticalrmm/tactical:v1.2.0
+        image: docker.io/tacticalrmm/tactical:1.2.0
         args: ["tactical-init"]
         envFrom:
         - configMapRef: { name: trmm-config }

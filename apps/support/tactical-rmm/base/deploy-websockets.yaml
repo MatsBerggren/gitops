@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: websockets
-        image: docker.io/tacticalrmm/tactical:v1.2.0
+        image: docker.io/tacticalrmm/tactical:1.2.0
         args: ["tactical-websockets"]
         envFrom:
         - configMapRef: { name: trmm-config }

@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: celerybeat
-        image: docker.io/tacticalrmm/tactical:v1.2.0
+        image: docker.io/tacticalrmm/tactical:1.2.0
         args: ["tactical-celerybeat"]
         envFrom:
         - configMapRef: { name: trmm-config }
