@@ -21,9 +21,9 @@ spec:
           containerPort: 80
         volumeMounts:
         - name: mesh-data
-          mountPath: /opt/meshcentral/meshcentral-data
+          mountPath: /home/node/app/meshcentral-data
         - name: mesh-config
-          mountPath: /opt/meshcentral/meshcentral-data/config.json
+          mountPath: /home/node/app/meshcentral-data/config.json
           subPath: config.json
       volumes:
       - name: mesh-data
