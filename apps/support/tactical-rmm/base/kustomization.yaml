@@ -6,4 +6,4 @@ namespace: tactical-rmm
 resources:
   - service.yaml
   - endpoints.yaml
-  - ingress.yaml
+  - namespace.yaml
