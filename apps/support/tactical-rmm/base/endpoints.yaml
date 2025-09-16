@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: tactical-rmm-external
+subsets:
+  - addresses:
+      - ip: 10.10.20.100   # <- IP till din Proxmox-VM
+    ports:
+      - port: 80
+        name: http
+      - port: 443
+        name: https

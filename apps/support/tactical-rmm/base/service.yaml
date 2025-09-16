@@ -1,18 +1,14 @@
-# service som pekar mot din VM
 apiVersion: v1
 kind: Service
 metadata:
   name: tactical-rmm-external
-  namespace: tactical-rmm
+  labels:
+    app: tactical-rmm
 spec:
-  type: ExternalName
-  externalName: 10.10.20.100  # <-- IP till din VM
   ports:
     - port: 80
       targetPort: 80
-      protocol: TCP
       name: http
     - port: 443
       targetPort: 443
-      protocol: TCP
       name: https
