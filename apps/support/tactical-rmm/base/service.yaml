@@ -1,18 +1,18 @@
-# service.yaml
+# service som pekar mot din VM
 apiVersion: v1
 kind: Service
 metadata:
   name: tactical-rmm-external
-  namespace: tactical-rmm
-  labels:
-    app: tactical-rmm
+  namespace: support
 spec:
-  type: ClusterIP
+  type: ExternalName
+  externalName: 10.10.20.100  # <-- IP till din VM
   ports:
-    - name: http
-      port: 80
+    - port: 80
       targetPort: 80
-    - name: https
-      port: 443
+      protocol: TCP
+      name: http
+    - port: 443
       targetPort: 443
-  selector: {} # ingen selector eftersom backend är extern — endpoints-manifest kopplar ihop
+      protocol: TCP
+      name: https
