@@ -17,7 +17,7 @@ spec:
               service:
                 name: tactical-rmm-external
                 port:
-                  number: 80
+                  number: 443
     - host: api.support4u.se
       http:
         paths:
@@ -37,4 +37,4 @@ spec:
               service:
                 name: tactical-rmm-external
                 port:
-                  number: 80
+                  number: 443
