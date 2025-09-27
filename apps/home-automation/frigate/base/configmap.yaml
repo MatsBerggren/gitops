@@ -44,7 +44,7 @@ data:
       camera1:
         ffmpeg:
           inputs:
-            - path: rtsp://mberggren:Agnes2001@dcs-8000lh.home.arpa/stream1
+            - path: rtsp://mberggren:Agnes2001@ipc.home.arpa/stream1
               roles:
                 - record
       camera2:
@@ -60,7 +60,7 @@ data:
       camera3:
         ffmpeg:
           inputs:
-            - path: rtsp://admin:785981@ipc.home.arpa/live/profile.0
+            - path: rtsp://admin:785981@dcs-8000lh.home.arpa/live/profile.0
               roles:
                 - record
       camera4:
