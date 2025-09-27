@@ -5,12 +5,11 @@ metadata:
   namespace: wordpress
   labels:
     app.kubernetes.io/name: wordpress
-    app.kubernetes.io/part-of: wordpress
 spec:
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: wordpress
   ports:
     - name: http
       port: 80
-      targetPort: 8080
-  type: ClusterIP
+      targetPort: 80
