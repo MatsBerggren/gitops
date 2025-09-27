@@ -49,9 +49,19 @@ spec:
               containerPort: 3306
           readinessProbe:
             exec:
-              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
+              command:
+                - sh
+                - -c
+                - >-
+                  mariadb-admin ping
+                  -h 127.0.0.1
+                  -u "$MARIADB_USER"
+                  -p"$MARIADB_PASSWORD"
+                  --silent
             initialDelaySeconds: 10
-            periodSeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 6
           livenessProbe:
             exec:
               command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
