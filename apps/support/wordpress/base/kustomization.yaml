@@ -8,4 +8,4 @@ resources:
   - mariadb-svc.yaml
   - wordpress-deploy.yaml
   - wordpress-svc.yaml
-  - ingress.yaml
+

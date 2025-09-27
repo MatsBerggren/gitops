@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: blog.home.arpa
+    - host: wp.support4u.se
       http:
         paths:
           - path: /
@@ -19,7 +19,6 @@ spec:
                 name: wordpress
                 port:
                   number: 80
-# Uncomment for TLS
-#  tls:
-#    - hosts: ["blog.home.arpa"]
-#      secretName: wordpress-tls
+  tls:
+    - hosts: ["wp.support4u.se"]
+      secretName: wordpress-tls
