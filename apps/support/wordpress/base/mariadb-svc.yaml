@@ -7,10 +7,10 @@ metadata:
     app.kubernetes.io/name: mariadb
     app.kubernetes.io/part-of: wordpress
 spec:
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: mariadb
   ports:
     - name: mysql
       port: 3306
       targetPort: 3306
-  clusterIP: None
