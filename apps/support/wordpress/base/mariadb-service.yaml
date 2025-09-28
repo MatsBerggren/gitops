@@ -4,10 +4,10 @@ metadata:
   name: mariadb
   namespace: wordpress
 spec:
+  clusterIP: None
   selector:
     app: mariadb
   ports:
     - name: mysql
       port: 3306
       targetPort: 3306
-  clusterIP: None  # headless for StatefulSet

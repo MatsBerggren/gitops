@@ -17,26 +17,6 @@ spec:
       initContainers:
         - name: wait-for-db
           image: mariadb:11.4
-          command:
-            - sh
-            - -c
-            - |
-              set -e
-              DB_FQDN="mariadb.wordpress.svc.cluster.local"
-              echo "Waiting for DB DNS..."
-              until getent hosts "$DB_FQDN" >/dev/null 2>&1; do sleep 2; done
-              echo "Waiting for TCP 3306 via mysqladmin (root)..."
-              until mysqladmin ping -h "$DB_FQDN" -uroot -p"$MARIADB_ROOT_PASSWORD" --silent; do sleep 2; done
-              echo "Checking SQL readiness (root)..."
-              mysql -h "$DB_FQDN" -uroot -p"$MARIADB_ROOT_PASSWORD" -e "SELECT 1" >/dev/null
-              echo "Optional: verify app user can auth (may wait on first-run user creation)..."
-              until mysql -h "$DB_FQDN" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" -e "SELECT 1" >/dev/null 2>&1; do sleep 2; done
-              echo "DB ready and app user OK."
-until getent hosts mariadb.wordpress.svc.cluster.local; do sleep 2; done
-              echo "Waiting for DB mysqladmin ping..."
-              until mysqladmin ping -hmariadb.wordpress.svc.cluster.local -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" --silent; do sleep 2; done
-              echo "DB is up."
-
           env:
             - name: MARIADB_ROOT_PASSWORD
               valueFrom:
@@ -53,6 +33,21 @@ until getent hosts mariadb.wordpress.svc.cluster.local; do sleep 2; done
                 secretKeyRef:
                   name: mariadb-secret
                   key: mariadb-password
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              DB_FQDN="mariadb.wordpress.svc.cluster.local"
+              echo "Waiting for DB DNS..."
+              until getent hosts "$DB_FQDN" >/dev/null 2>&1; do sleep 2; done
+              echo "Waiting for mysqladmin ping (root)..."
+              until mysqladmin ping -h "$DB_FQDN" -uroot -p"$MARIADB_ROOT_PASSWORD" --silent; do sleep 2; done
+              echo "Checking SQL (root)..."
+              mysql -h "$DB_FQDN" -uroot -p"$MARIADB_ROOT_PASSWORD" -e "SELECT 1" >/dev/null
+              echo "Checking app user auth..."
+              until mysql -h "$DB_FQDN" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" -e "SELECT 1" >/dev/null 2>&1; do sleep 2; done
+              echo "DB ready."
       containers:
         - name: wordpress
           image: wordpress:6.6-apache
@@ -91,7 +86,7 @@ until getent hosts mariadb.wordpress.svc.cluster.local; do sleep 2; done
               path: /
               port: 80
             periodSeconds: 5
-            failureThreshold: 60   # up to 5 minutes warm-up
+            failureThreshold: 60
             timeoutSeconds: 2
           readinessProbe:
             httpGet:
@@ -118,7 +113,7 @@ metadata:
   namespace: wordpress
 spec:
   accessModes: ["ReadWriteOnce"]
+  storageClassName: cephfs
   resources:
     requests:
       storage: 5Gi
-  # storageClassName can be set via overlay
