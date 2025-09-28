@@ -3,9 +3,9 @@ kind: Kustomization
 namespace: wordpress
 resources:
   - namespace.yaml
-  - secret-db.yaml
-  - mariadb-svc.yaml
+  - secret-mariadb.yaml
+  - mariadb-service.yaml
   - mariadb-statefulset.yaml
-  - wordpress-svc.yaml
-  - wordpress-deploy.yaml
+  - wordpress-service.yaml
+  - wordpress-deployment.yaml
   - ingress.yaml

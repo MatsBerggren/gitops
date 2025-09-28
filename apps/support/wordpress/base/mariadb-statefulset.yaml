@@ -3,76 +3,78 @@ kind: StatefulSet
 metadata:
   name: mariadb
   namespace: wordpress
-  labels:
-    app.kubernetes.io/name: mariadb
-    app.kubernetes.io/part-of: wordpress
 spec:
   serviceName: mariadb
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: mariadb
+      app: mariadb
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: mariadb
+        app: mariadb
     spec:
-      securityContext:
-        fsGroup: 999
+      terminationGracePeriodSeconds: 60
       containers:
         - name: mariadb
           image: mariadb:11.4
-          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
           env:
             - name: MARIADB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: wp-db-secret
+                  name: mariadb-secret
                   key: mariadb-root-password
+            - name: MARIADB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: mariadb-database
             - name: MARIADB_USER
               valueFrom:
                 secretKeyRef:
-                  name: wp-db-secret
+                  name: mariadb-secret
                   key: mariadb-user
             - name: MARIADB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: wp-db-secret
+                  name: mariadb-secret
                   key: mariadb-password
-            - name: MARIADB_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: wp-db-secret
-                  key: mariadb-database
-          ports:
-            - name: mysql
-              containerPort: 3306
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          startupProbe:
+            exec:
+              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
+            periodSeconds: 5
+            failureThreshold: 60
+            timeoutSeconds: 3
           readinessProbe:
             exec:
               command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            periodSeconds: 5
+            failureThreshold: 6
+            timeoutSeconds: 3
           livenessProbe:
             exec:
               command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
-            initialDelaySeconds: 30
             periodSeconds: 10
-          resources:
-            requests:
-              cpu: "50m"
-              memory: "128Mi"
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
-          volumeMounts:
-            - name: mariadb-data
-              mountPath: /var/lib/mysql
+            failureThreshold: 6
+            timeoutSeconds: 3
   volumeClaimTemplates:
     - metadata:
-        name: mariadb-data
+        name: data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: longhorn
         resources:
           requests:
-            storage: 5Gi
+            storage: 10Gi
+        # storageClassName can be set via overlay

@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: wordpress
 resources:
   - ../../base
+# Tip: Add small patches here if you want to override ingress host/issuer per env.

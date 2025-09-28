@@ -1,21 +1,26 @@
-# WordPress on k3s — homelab (NGINX Ingress)
+# WordPress on k3s (Kustomize) — base-first
 
-This package deploys a small WordPress + MariaDB stack via Kustomize for a single environment: **homelab**.
+## Storage (in base)
+- **MariaDB** → `storageClassName: ceph01` (Ceph RBD, RWO)
+- **wp-content** → `storageClassName: cephfs` (CephFS, RWX)
 
-- Hostname: **wordpress.support4u.se**
-- Ingress class: **nginx**
-- TLS: enabled via cert-manager (issuer: `letsencrypt-dns`)
-- Storage:
-  - MariaDB: Longhorn (RWO) 5Gi
-  - WordPress uploads (wp-content): Longhorn (RWO) 5Gi
+## Probes & startup
+- `startupProbe` prevents early liveness/readiness failures.
+- InitContainer waits for MariaDB DNS + TCP health.
 
-> Adjust storageClassName if you don't use Longhorn.
+## Ingress
+- Host: `wordpress.support4u.se`
+- Annotation: `cert-manager.io/cluster-issuer: letsencrypt-dns`
+
+## Layout
+- `base/` — everything needed out of the box (storage included)
+- `overlays/homelab/` — optional future tweaks (e.g., host/issuer/resources)
 
 ## Apply
 ```bash
+# 1) Edit base/secret-mariadb.yaml (passwords)
+# 2) Deploy
+kubectl apply -k base
+# or, if you prefer to keep using overlays:
 kubectl apply -k overlays/homelab
 ```
-
-## Update secrets
-Edit `base/secret-db.yaml` to change passwords before applying.
-For production, consider External Secrets Operator instead of a plain Secret.

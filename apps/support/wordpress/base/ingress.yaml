@@ -6,9 +6,12 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-dns"
     nginx.ingress.kubernetes.io/proxy-body-size: "64m"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - wordpress.support4u.se
+      secretName: wordpress-tls
   rules:
     - host: wordpress.support4u.se
       http:
@@ -20,6 +23,3 @@ spec:
                 name: wordpress
                 port:
                   number: 80
-  tls:
-    - hosts: ["wordpress.support4u.se"]
-      secretName: wordpress-tls
