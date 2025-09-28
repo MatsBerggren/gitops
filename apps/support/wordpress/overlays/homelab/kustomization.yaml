@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: wordpress
 resources:
   - ../../base
-# You can add per-env patches here if desired.
+# Add env-specific patches here if needed (hosts, issuer, resources, etc).

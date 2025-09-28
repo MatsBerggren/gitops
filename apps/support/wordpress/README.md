@@ -1,37 +1,27 @@
-# WordPress on k3s (Kustomize) — base-first
+# WordPress on k3s (Kustomize) — fixed
 
-## Storage (in base)
-- **MariaDB** → `storageClassName: ceph01` (Ceph RBD, RWO)
-- **wp-content** → `storageClassName: cephfs` (CephFS, RWX)
-
-## Probes & startup
-- `startupProbe` prevents early liveness/readiness failures.
-- InitContainer waits for MariaDB DNS + TCP health.
-
-## Ingress
-- Host: `wordpress.support4u.se`
-- Annotation: `cert-manager.io/cluster-issuer: letsencrypt-dns`
-
-## Layout
-- `base/` — everything needed out of the box (storage included)
-- `overlays/homelab/` — optional future tweaks (e.g., host/issuer/resources)
+## What’s inside
+- MariaDB (StatefulSet) with **tcpSocket** startup/readiness/liveness probes
+- WordPress (Deployment) with **initContainer** waiting for DB using **app-user SELECT 1**
+- Storage: **longhorn** in base
+  - MariaDB PVC: RWO on `longhorn`
+  - wp-content PVC: **RWX** on `longhorn` (share-manager)
+- Ingress prefilled for `wordpress.support4u.se`
 
 ## Apply
 ```bash
-# 1) Edit base/secret-mariadb.yaml (passwords)
-# 2) Deploy
+# edit base/secret-mariadb.yaml to set passwords first
 kubectl apply -k base
-# or, if you prefer to keep using overlays:
+# or
 kubectl apply -k overlays/homelab
 ```
 
-
-## Storage classes in this cluster
-Detected (from your output): `longhorn` and `local-path`.
-- Base now uses **longhorn**:
-  - MariaDB: RWO on `longhorn`
-  - wp-content: RWX on `longhorn` (uses Longhorn share-manager)
-- If you want pure local disks, use overlay:
+## Optional overlay
+- `overlays/local-path`: uses `local-path` for both MariaDB and wp-content (RWO).
   ```bash
   kubectl apply -k overlays/local-path
   ```
+
+## Notes
+- If your Longhorn setup doesn’t have RWX enabled, change wp-content PVC to ReadWriteOnce or use the `local-path` overlay.
+- Probes and init are tuned to avoid early restarts and to wait for DB correctly.

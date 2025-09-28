@@ -58,14 +58,14 @@ spec:
             failureThreshold: 120
             timeoutSeconds: 2
           readinessProbe:
-            exec:
-              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD --silent"]
+            tcpSocket:
+              port: 3306
             periodSeconds: 5
-            failureThreshold: 12
-            timeoutSeconds: 3
+            failureThreshold: 60
+            timeoutSeconds: 2
           livenessProbe:
-            exec:
-              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD --silent"]
+            tcpSocket:
+              port: 3306
             periodSeconds: 10
             failureThreshold: 12
             timeoutSeconds: 3
