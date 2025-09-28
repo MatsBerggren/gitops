@@ -52,29 +52,20 @@ spec:
               cpu: "500m"
               memory: "1Gi"
           startupProbe:
-            exec:
-              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
+            tcpSocket:
+              port: 3306
             periodSeconds: 5
-            failureThreshold: 60
-            timeoutSeconds: 3
+            failureThreshold: 120
+            timeoutSeconds: 2
           readinessProbe:
             exec:
-              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
+              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD --silent"]
             periodSeconds: 5
-            failureThreshold: 6
+            failureThreshold: 12
             timeoutSeconds: 3
           livenessProbe:
             exec:
-              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
+              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD --silent"]
             periodSeconds: 10
-            failureThreshold: 6
+            failureThreshold: 12
             timeoutSeconds: 3
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 10Gi
-        # storageClassName can be set via overlay

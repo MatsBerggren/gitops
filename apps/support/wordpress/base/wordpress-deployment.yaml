@@ -21,13 +21,28 @@ spec:
             - sh
             - -c
             - |
+              set -e
+              DB_FQDN="mariadb.wordpress.svc.cluster.local"
               echo "Waiting for DB DNS..."
-              until getent hosts mariadb.wordpress.svc.cluster.local; do sleep 2; done
+              until getent hosts "$DB_FQDN" >/dev/null 2>&1; do sleep 2; done
+              echo "Waiting for TCP 3306 via mysqladmin (root)..."
+              until mysqladmin ping -h "$DB_FQDN" -uroot -p"$MARIADB_ROOT_PASSWORD" --silent; do sleep 2; done
+              echo "Checking SQL readiness (root)..."
+              mysql -h "$DB_FQDN" -uroot -p"$MARIADB_ROOT_PASSWORD" -e "SELECT 1" >/dev/null
+              echo "Optional: verify app user can auth (may wait on first-run user creation)..."
+              until mysql -h "$DB_FQDN" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" -e "SELECT 1" >/dev/null 2>&1; do sleep 2; done
+              echo "DB ready and app user OK."
+until getent hosts mariadb.wordpress.svc.cluster.local; do sleep 2; done
               echo "Waiting for DB mysqladmin ping..."
               until mysqladmin ping -hmariadb.wordpress.svc.cluster.local -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" --silent; do sleep 2; done
               echo "DB is up."
 
           env:
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: mariadb-root-password
             - name: WORDPRESS_DB_USER
               valueFrom:
                 secretKeyRef:
