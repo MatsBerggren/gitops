@@ -44,59 +44,29 @@ spec:
                 secretKeyRef:
                   name: wp-db-secret
                   key: mariadb-database
-            - name: MARIADB_AUTO_UPGRADE
-              value: "1"
           ports:
             - name: mysql
               containerPort: 3306
           readinessProbe:
             exec:
-              command:
-                - sh
-                - -c
-                - >
-                  mariadb -h 127.0.0.1
-                  -u "$MARIADB_USER"
-                  -p"$MARIADB_PASSWORD"
-                  -e "SELECT 1"
-            initialDelaySeconds: 30
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 6
+              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
           livenessProbe:
             exec:
-              command:
-                - sh
-                - -c
-                - >
-                  mariadb -h 127.0.0.1
-                  -u root
-                  -p"$MARIADB_ROOT_PASSWORD"
-                  -e "SELECT 1"
-            initialDelaySeconds: 60
+              command: ["sh","-c","mysqladmin ping -h 127.0.0.1 -uroot -p$MARIADB_ROOT_PASSWORD"]
+            initialDelaySeconds: 30
             periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
           resources:
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "50m"
+              memory: "128Mi"
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "500m"
+              memory: "512Mi"
           volumeMounts:
             - name: mariadb-data
               mountPath: /var/lib/mysql
-            - name: mariadb-config
-              mountPath: /etc/mysql/conf.d/override.cnf
-              subPath: override.cnf
-      volumes:
-        - name: mariadb-config
-          configMap:
-            name: mariadb-override
-            items:
-              - key: override.cnf
-                path: override.cnf
   volumeClaimTemplates:
     - metadata:
         name: mariadb-data
@@ -105,4 +75,4 @@ spec:
         storageClassName: longhorn
         resources:
           requests:
-            storage: 10Gi
+            storage: 5Gi

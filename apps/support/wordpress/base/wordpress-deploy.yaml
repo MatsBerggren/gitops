@@ -40,11 +40,13 @@ spec:
                 secretKeyRef:
                   name: wp-db-secret
                   key: mariadb-database
+            - name: WORDPRESS_CONFIG_EXTRA
+              value: |
+                define( 'WP_MEMORY_LIMIT', '128M' );
+                define( 'WP_MAX_MEMORY_LIMIT', '256M' );
           ports:
             - name: http
               containerPort: 80
-            - name: php-fpm
-              containerPort: 9000
           readinessProbe:
             httpGet:
               path: /
@@ -59,11 +61,11 @@ spec:
             periodSeconds: 10
           resources:
             requests:
-              cpu: "200m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "256Mi"
             limits:
-              cpu: "2"
-              memory: "2Gi"
+              cpu: "1"
+              memory: "512Mi"
           volumeMounts:
             - name: wp-data
               mountPath: /var/www/html
@@ -84,4 +86,4 @@ spec:
   storageClassName: longhorn
   resources:
     requests:
-      storage: 10Gi
+      storage: 5Gi

@@ -4,8 +4,8 @@ namespace: wordpress
 resources:
   - namespace.yaml
   - secret-db.yaml
-  - mariadb-statefulset.yaml
   - mariadb-svc.yaml
-  - wordpress-deploy.yaml
+  - mariadb-statefulset.yaml
   - wordpress-svc.yaml
-
+  - wordpress-deploy.yaml
+  - ingress.yaml
