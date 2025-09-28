@@ -112,8 +112,8 @@ metadata:
   name: wp-content
   namespace: wordpress
 spec:
-  accessModes: ["ReadWriteOnce"]
-  storageClassName: cephfs
+  accessModes: ["ReadWriteMany"]
+  storageClassName: longhorn
   resources:
     requests:
       storage: 5Gi

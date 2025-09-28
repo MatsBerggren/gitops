@@ -24,3 +24,14 @@ kubectl apply -k base
 # or, if you prefer to keep using overlays:
 kubectl apply -k overlays/homelab
 ```
+
+
+## Storage classes in this cluster
+Detected (from your output): `longhorn` and `local-path`.
+- Base now uses **longhorn**:
+  - MariaDB: RWO on `longhorn`
+  - wp-content: RWX on `longhorn` (uses Longhorn share-manager)
+- If you want pure local disks, use overlay:
+  ```bash
+  kubectl apply -k overlays/local-path
+  ```
