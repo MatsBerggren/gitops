@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-lock
+data:
+  myservice.image: ghcr.io/acme/myservice@sha256:abc123...
+  billing.image: ghcr.io/acme/billing@sha256:def456...
+  

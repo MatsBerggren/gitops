@@ -1,0 +1,11 @@
+release: 2025.10.02
+components:
+  myservice:
+    semver: 1.12.0
+    image: ghcr.io/acme/myservice
+    digest: sha256:abc123...
+    changelog: "Fix for invoice rounding"
+  billing:
+    semver: 2.3.1
+    image: ghcr.io/acme/billing
+    digest: sha256:def456...

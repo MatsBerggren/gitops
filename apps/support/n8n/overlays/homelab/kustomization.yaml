@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: n8n
+resources:
+  - ../../base
+  - ingress.yaml
+
+patches:
+  - path: patch-deployment.yaml
+  - path: patch-pvc-storageclass.yaml
+
+# Pin image tag or digest here
+images:
+  - name: n8nio/n8n
+    newTag: "latest"
+    # Example for digest pinning:
+    # newName: n8nio/n8n@sha256:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# Optional: add basic auth quickly (uncomment and create a secret)
+secretGenerator:
+  - name: n8n-basic-auth
+    literals:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=Agnes2001!
+generatorOptions:
+  disableNameSuffixHash: true
