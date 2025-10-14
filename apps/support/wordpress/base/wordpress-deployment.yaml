@@ -46,7 +46,7 @@ spec:
               echo "DB ready."
       containers:
         - name: wordpress
-          image: wordpress:6.6-apache
+          image: wordpress:6.8.3-php8.3-apache
           ports:
             - containerPort: 80
           env:
@@ -70,13 +70,6 @@ spec:
           volumeMounts:
             - name: wp-content
               mountPath: /var/www/html/wp-content
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "256Mi"
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
           startupProbe:
             tcpSocket: { port: 80 }
             periodSeconds: 5
