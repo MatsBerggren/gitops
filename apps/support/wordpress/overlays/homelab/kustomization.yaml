@@ -12,3 +12,10 @@ patches:
       kind: Deployment
       name: wordpress        # ändra om namnet är annat
       namespace: wordpress
+  - path: wordpress-ingress-cache-patch.yaml
+    target:
+      group: networking.k8s.io
+      version: v1
+      kind: Ingress
+      name: wordpress            # ändra om ditt namn skiljer sig
+      namespace: wordpress
