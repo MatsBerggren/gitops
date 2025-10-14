@@ -14,6 +14,7 @@ spec:
       labels:
         app: redis
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
         - name: redis
           image: redis:7.2-alpine
@@ -27,7 +28,15 @@ spec:
                 secretKeyRef:
                   name: redis-auth
                   key: redis-password
-          command: ["sh","-c","exec redis-server --appendonly yes --requirepass \"$REDIS_PASSWORD\""]
+          command:
+            - sh
+            - -c
+            - >
+              exec redis-server
+              --appendonly yes
+              --requirepass "$REDIS_PASSWORD"
+              --bind 0.0.0.0
+              --protected-mode no
           resources:
             requests:
               cpu: 50m
@@ -38,15 +47,32 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+          livenessProbe:
+            tcpSocket: { port: 6379 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -lc
+                - redis-cli -a "$REDIS_PASSWORD" ping | grep -q PONG
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          startupProbe:
+            tcpSocket: { port: 6379 }
+            periodSeconds: 5
+            failureThreshold: 12
   volumeClaimTemplates:
+    # (A) Vill du att Argo slutar “diffa”: behåll apiVersion/kind här.
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
         name: data
       spec:
         accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
         resources:
           requests:
             storage: 2Gi
-        storageClassName: longhorn
-        
+    # (B) Alternativ: ta bort apiVersion/kind om du hellre använder Argo ignoreDifferences.

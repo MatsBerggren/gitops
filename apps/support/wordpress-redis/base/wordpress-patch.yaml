@@ -10,7 +10,7 @@ spec:
         - name: wordpress
           env:
             - name: REDIS_HOST
-              value: "redis.wordpress.svc.cluster.local"
+              value: "redis"   # eller "redis.wordpress.svc.cluster.local"
             - name: REDIS_PORT
               value: "6379"
             - name: REDIS_PASSWORD
@@ -19,7 +19,7 @@ spec:
                   name: redis-auth
                   key: redis-password
             - name: WP_CACHE_KEY_SALT
-              value: "wp:www.taberg.info:"
+              value: "wp:www.taberg.info:"   # byt till din domän/unik salt
             - name: WORDPRESS_CONFIG_EXTRA
               value: |
                 // === Redis Object Cache settings ===
