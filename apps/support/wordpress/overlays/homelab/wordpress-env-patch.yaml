@@ -19,7 +19,7 @@ spec:
               name: redis-auth
               key: redis-password
         - name: WP_CACHE_KEY_SALT
-          value: "wp:<din-domän>:"   # byt till något unikt
+          value: "wp:www.taberg.info:"   # byt till något unikt
         - name: WORDPRESS_CONFIG_EXTRA
           value: |
             if (!defined('WP_REDIS_HOST'))  define('WP_REDIS_HOST', getenv('REDIS_HOST'));
