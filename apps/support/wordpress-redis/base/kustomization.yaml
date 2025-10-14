@@ -4,7 +4,6 @@ kind: Kustomization
 namespace: wordpress
 
 resources:
-  - namespace.yaml
   - redis-secret.yaml
   - redis-statefulset.yaml
   - redis-service.yaml
