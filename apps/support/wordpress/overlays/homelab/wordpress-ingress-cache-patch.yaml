@@ -11,5 +11,3 @@ metadata:
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_ignore_headers Set-Cookie;
       add_header X-Cache-Status $upstream_cache_status;
-spec:
-  # behåll din nuvarande spec (rules/tls/ingressClassName)
