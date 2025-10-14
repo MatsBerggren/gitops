@@ -47,16 +47,3 @@ spec:
           requests:
             storage: 2Gi
         storageClassName: shared-nfs
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis
-  namespace: wordpress
-spec:
-  selector:
-    app: redis
-  ports:
-    - name: redis
-      port: 6379
-      targetPort: 6379
