@@ -13,7 +13,7 @@ spec:
           value: "redis"   # eller "redis.wordpress.svc.cluster.local"
         - name: REDIS_PORT
           value: "6379"
-
+        - name: REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
               name: redis-auth
