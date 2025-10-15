@@ -3,8 +3,16 @@ kind: Kustomization
 namespace: wordpress
 resources:
   - ../../base
+  - mariadb-tuning-configmap.yaml
 
 patches:
+  - path: mariadb-tuning-patch.yaml
+    target:
+      group: apps
+      version: v1
+      kind: StatefulSet
+      name: mariadb
+      namespace: wordpress
   - path: wordpress-env-patch.yaml
     target:
       group: apps
