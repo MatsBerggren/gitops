@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wp-php-ini
+  namespace: wordpress
+data:
+  00-custom.ini: |
+    memory_limit=512M
+    max_execution_time=120
+
+    opcache.enable=1
+    opcache.enable_cli=1
+    opcache.memory_consumption=256
+    opcache.max_accelerated_files=20000
+    opcache.validate_timestamps=1
+    opcache.revalidate_freq=2
+
+    session.save_handler=redis
+    session.save_path="tcp://redis.wordpress.svc.cluster.local:6379"

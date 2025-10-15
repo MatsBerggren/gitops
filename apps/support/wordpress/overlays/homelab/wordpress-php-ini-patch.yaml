@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  namespace: wordpress
+spec:
+  template:
+    spec:
+      volumes:
+      - name: php-ini
+        configMap:
+          name: wp-php-ini
+      containers:
+      - name: wordpress
+        volumeMounts:
+        - name: php-ini
+          mountPath: /usr/local/etc/php/conf.d/00-custom.ini
+          subPath: 00-custom.ini
