@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rustdesk-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: rustdesk-server }
+  template:
+    metadata:
+      labels: { app: rustdesk-server }
+    spec:
+      containers:
+        - name: hbbr
+          image: rustdesk/rustdesk-server:latest
+          args: ["hbbr"]
+          ports:
+            - name: relay
+              containerPort: 21117
+              protocol: TCP
+            - name: web-hbbr
+              containerPort: 21119
+              protocol: TCP
+          volumeMounts:
+            - { name: data, mountPath: /root }
+
+        - name: hbbs
+          image: rustdesk/rustdesk-server:latest
+          args: ["hbbs","-k","_"]
+          ports:
+            - { name: rendezvous, containerPort: 21115, protocol: TCP }
+            - { name: nat-tcp,   containerPort: 21116, protocol: TCP }
+            - { name: nat-udp,   containerPort: 21116, protocol: UDP }
+            - { name: web-hbbs,  containerPort: 21118, protocol: TCP }
+          volumeMounts:
+            - { name: data, mountPath: /root }
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: rustdesk-data
