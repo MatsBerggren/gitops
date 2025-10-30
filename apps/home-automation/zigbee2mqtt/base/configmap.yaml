@@ -12,6 +12,6 @@ data:
       user: "ha"
       password: "CHANGEME"
     serial:
-      port: tcp://slzb-06m.home.arpa:6638
+      port: tcp://10.10.60.107:6638
       adapter: ezsp
     frontend: true
