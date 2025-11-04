@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: glpi
+  labels:
+    app: glpi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: glpi
+  template:
+    metadata:
+      labels:
+        app: glpi
+    spec:
+      containers:
+        - name: glpi
+          image: glpi/glpi:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: glpi-mysql-secret
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: glpi-data
+              mountPath: /var/glpi
+      volumes:
+        - name: glpi-data
+          persistentVolumeClaim:
+            claimName: glpi-data
