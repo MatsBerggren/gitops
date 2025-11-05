@@ -13,7 +13,7 @@ patches:
 # Pin image tag or digest here
 images:
   - name: n8nio/n8n
-    newTag: "latest"
+    newTag: "1.119.0"
     # Example for digest pinning:
     # newName: n8nio/n8n@sha256:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
