@@ -1,3 +1,4 @@
+# glpi/overlays/homelab/patch-resources.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8,15 +9,22 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mysql
-          image: busybox:1.36
-          command:
-            - sh
-            - -c
+          image: mysql:8.0
+          envFrom:
+            - secretRef:
+                name: glpi-mysql-secret
+          command: ["sh", "-c"]
+          args:
             - |
-              echo "Waiting for MySQL at glpi-mysql:3306..."
-              until nc -z glpi-mysql 3306; do
+              echo "Waiting for MySQL at ${GLPI_DB_HOST:-glpi-mysql}:${GLPI_DB_PORT:-3306}..."
+              until mysqladmin ping \
+                -h"${GLPI_DB_HOST:-glpi-mysql}" \
+                -P"${GLPI_DB_PORT:-3306}" \
+                -u"${GLPI_DB_USER:-glpi}" \
+                -p"${GLPI_DB_PASSWORD}" \
+                --silent; do
                 echo "MySQL not ready yet, sleeping..."
-                sleep 2
+                sleep 3
               done
               echo "MySQL is up, starting GLPI."
       containers:
