@@ -13,9 +13,14 @@ spec:
       labels:
         app: n8n
     spec:
+      # 👇 Dessa två rader gör att podden inte använder klustrets DNS (CoreDNS)
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 10.10.10.1    # pfSense
+          - 1.1.1.1       # Cloudflare som fallback
       containers:
         - name: n8n
-          # Pin image via kustomize images in overlays
           image: n8nio/n8n:latest
           imagePullPolicy: IfNotPresent
           ports:
