@@ -4,6 +4,28 @@ metadata:
   name: glpi
 spec:
   replicas: 1
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for MySQL at glpi-mysql:3306..."
+              until nc -z glpi-mysql 3306; do
+                echo "MySQL not ready yet, sleeping..."
+                sleep 2
+              done
+              echo "MySQL is up, starting GLPI."
+      containers:
+        - name: glpi
+          env:
+            - name: GLPI_SKIP_AUTOINSTALL
+              value: "true"
+            - name: GLPI_SKIP_AUTOUPDATE
+              value: "true"
 ---
 apiVersion: apps/v1
 kind: Deployment
