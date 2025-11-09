@@ -19,14 +19,14 @@ spec:
           envFrom:
             - secretRef:
                 name: keycloak-postgres-secret
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
           volumeMounts:
             - name: data
-              mountPath: /var/lib/postgresql/data/pgdata
-          env:
-            - name: PGDATA
-              value: /var/lib/postgresql/data/pgdata
+              mountPath: /var/lib/postgresql/data
       volumes:
         - name: data
           persistentVolumeClaim:
