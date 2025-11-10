@@ -67,6 +67,12 @@ spec:
                 secretKeyRef:
                   name: mariadb-secret
                   key: mariadb-database
+            - name: WORDPRESS_CONFIG_EXTRA
+              value: |
+                @ini_set( 'upload_max_filesize', '400M' );
+                @ini_set( 'post_max_size',      '400M' );
+                @ini_set( 'max_execution_time', '300'  );
+                @ini_set( 'memory_limit',       '512M' );
           volumeMounts:
             - name: wp-content
               mountPath: /var/www/html/wp-content
