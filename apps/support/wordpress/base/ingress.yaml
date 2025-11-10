@@ -5,7 +5,7 @@ metadata:
   namespace: wordpress
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-dns"
-    nginx.ingress.kubernetes.io/proxy-body-size: "400m"
+    nginx.ingress.kubernetes.io/proxy-body-size: "600m"
 spec:
   ingressClassName: nginx
   tls:

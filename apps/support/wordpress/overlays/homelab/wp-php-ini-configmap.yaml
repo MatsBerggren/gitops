@@ -7,8 +7,8 @@ data:
   00-custom.ini: |
     memory_limit=512M
     max_execution_time=300
-    upload_max_filesize=400M
-    post_max_size=400M
+    upload_max_filesize=600M
+    post_max_size=600M
 
     opcache.enable=1
     opcache.enable_cli=1
