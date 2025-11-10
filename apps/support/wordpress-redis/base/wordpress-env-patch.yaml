@@ -1,15 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  # name medvetet utelämnat – vi matchar på label istället
+  name: wordpress          # MÅSTE matcha namnet på din riktiga WordPress-deployment
+  labels:
+    app: wordpress         # valfritt men bra, ifall din deployment använder denna label
 spec:
   template:
     spec:
       containers:
-        - name: wordpress        # behåll om din container heter "wordpress"
+        - name: wordpress  # behåll om din container heter "wordpress"
           env:
             - name: REDIS_HOST
-              value: "redis.wordpress.svc.cluster.local"     # eller "redis.wordpress.svc.cluster.local"
+              value: "redis.wordpress.svc.cluster.local"
             - name: REDIS_PORT
               value: "6379"
             - name: REDIS_PASSWORD
@@ -18,7 +20,7 @@ spec:
                   name: redis-auth
                   key: redis-password
             - name: WP_CACHE_KEY_SALT
-              value: "wp:www.taberg.info:"   # BYT till något unikt
+              value: "wp:www.taberg.info:"   # BYT till något unikt för din sajt
             - name: WORDPRESS_CONFIG_EXTRA
               value: |
                 if (!defined('WP_REDIS_HOST'))  define('WP_REDIS_HOST', getenv('REDIS_HOST'));
