@@ -8,5 +8,3 @@ resources:
   - redis-statefulset.yaml
   - redis-service.yaml
 
-patchesStrategicMerge:
-  - wordpress-env-patch.yaml

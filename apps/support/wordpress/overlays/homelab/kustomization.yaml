@@ -1,12 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: wordpress
+
 resources:
   - ../../base
   - mariadb-tuning-configmap.yaml
   - wp-php-ini-configmap.yaml
 
 patches:
+  # 1) Resurser (CPU/MEM) för Wordpress
   - path: wordpress-resources-patch.yaml
     target:
       group: apps
@@ -14,29 +16,9 @@ patches:
       kind: Deployment
       name: wordpress
       namespace: wordpress
-  - path: mariadb-tuning-patch.yaml
-    target:
-      group: apps
-      version: v1
-      kind: StatefulSet
-      name: mariadb
-      namespace: wordpress
-  - path: wordpress-env-patch.yaml
-    target:
-      group: apps
-      version: v1
-      kind: Deployment
-      name: wordpress        # ändra om namnet är annat
-      namespace: wordpress
-  - path: wordpress-ingress-cache-patch.yaml
-    target:
-      group: networking.k8s.io
-      version: v1
-      kind: Ingress
-      name: wordpress            # ändra om ditt namn skiljer sig
-      namespace: wordpress
 
-  - path: wordpress-php-ini-patch.yaml
+  # 2) Redis-env & WORDPRESS_CONFIG_EXTRA
+  - path: wordpress-env-patch.yaml
     target:
       group: apps
       version: v1
@@ -44,3 +26,20 @@ patches:
       name: wordpress
       namespace: wordpress
 
+  # 3) Ingress-cache (nginx annotations)
+  - path: wordpress-ingress-cache-patch.yaml
+    target:
+      group: networking.k8s.io
+      version: v1
+      kind: Ingress
+      name: wordpress
+      namespace: wordpress
+
+  # 4) PHP-ini/ConfigMap mount
+  - path: wordpress-php-ini-patch.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: wordpress
+      namespace: wordpress
