@@ -8,10 +8,5 @@ resources:
   - redis-statefulset.yaml
   - redis-service.yaml
 
-patches:
-  - path: wordpress-env-patch.yaml
-    target:
-      group: apps
-      version: v1
-      kind: Deployment
-      labelSelector: "app=wordpress"
+patchesStrategicMerge:
+  - wordpress-env-patch.yaml
