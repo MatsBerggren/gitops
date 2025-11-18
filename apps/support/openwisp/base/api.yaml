@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: openwisp/openwisp-controller:latest
+          image: openwisp/openwisp-api:latest
           ports:
             - containerPort: 8000
               name: http
