@@ -12,3 +12,6 @@ resources:
   - celery.yaml
   - celerybeat.yaml
   - websocket.yaml
+  - influxdb-pvc.yaml
+  - influxdb-deployment.yaml
+  - influxdb-service.yaml
