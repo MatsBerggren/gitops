@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodered
+  namespace: home-automation
+  labels:
+    app: nodered
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodered
+  template:
+    metadata:
+      labels:
+        app: nodered
+    spec:
+      containers:
+        - name: nodered
+          image: nodered/node-red:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 1880
+              name: http
+          env:
+            - name: TZ
+              value: "Europe/Stockholm"
+          volumeMounts:
+            - name: nodered-data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+      volumes:
+        - name: nodered-data
+          persistentVolumeClaim:
+            claimName: nodered-data

@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openwisp-dashboard
+  namespace: openwisp
+spec:
+  type: ClusterIP
+  selector:
+    app: openwisp-dashboard
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwisp-dashboard
+  namespace: openwisp
+  labels:
+    app: openwisp-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openwisp-dashboard
+  template:
+    metadata:
+      labels:
+        app: openwisp-dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: openwisp/openwisp-dashboard:latest
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: openwisp-config
+            - secretRef:
+                name: openwisp-secret
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"

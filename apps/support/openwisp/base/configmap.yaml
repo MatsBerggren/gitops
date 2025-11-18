@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openwisp-config
+  namespace: openwisp
+data:
+  TZ: "Europe/Stockholm"
+  DASHBOARD_DOMAIN: "openwisp.support4u.se"
+  API_DOMAIN: "api-openwisp.support4u.se"
+  VPN_DOMAIN: "openvpn-openwisp.support4u.se"
+  CERT_ADMIN_EMAIL: "admin@support4u.se"
+  SSL_CERT_MODE: "External"
+  DB_NAME: "openwisp"
+  DB_USER: "openwisp"
+  DB_HOST: "openwisp-postgres"
+  DB_PORT: "5432"

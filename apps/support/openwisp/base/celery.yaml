@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwisp-celery
+  namespace: openwisp
+  labels:
+    app: openwisp-celery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openwisp-celery
+  template:
+    metadata:
+      labels:
+        app: openwisp-celery
+    spec:
+      containers:
+        - name: celery
+          image: openwisp/openwisp-dashboard:latest
+          command: ["celery"]
+          args: ["-A", "openwisp2", "worker", "-l", "info"]
+          envFrom:
+            - configMapRef:
+                name: openwisp-config
+            - secretRef:
+                name: openwisp-secret
+          env:
+            - name: CELERY_BROKER_URL
+              value: "redis://openwisp-redis:6379/0"
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
