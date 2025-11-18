@@ -14,3 +14,4 @@ data:
   DB_USER: "openwisp"
   DB_HOST: "openwisp-postgres"
   DB_PORT: "5432"
+  TIMESERIES_DB: '{"ENGINE":"influxdb","NAME":"openwisp2","HOST":"openwisp-influxdb","PORT":8086}'
