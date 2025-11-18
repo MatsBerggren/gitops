@@ -15,6 +15,7 @@ spec:
       labels:
         app: openwisp-celery
     spec:
+      enableServiceLinks: false
       containers:
         - name: celery
           image: openwisp/openwisp-dashboard:latest

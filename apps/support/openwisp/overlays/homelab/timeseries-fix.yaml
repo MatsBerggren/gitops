@@ -8,6 +8,6 @@ data:
     {
       "ENGINE": "influxdb",
       "NAME": "openwisp2",
-      "HOST": "influxdb",
+      "HOST": "openwisp-influxdb",
       "PORT": 8086
     }

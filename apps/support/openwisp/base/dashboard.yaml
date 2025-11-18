@@ -29,6 +29,7 @@ spec:
       labels:
         app: openwisp-dashboard
     spec:
+      enableServiceLinks: false
       containers:
         - name: dashboard
           image: openwisp/openwisp-dashboard:latest

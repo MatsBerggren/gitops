@@ -29,6 +29,7 @@ spec:
       labels:
         app: openwisp-api
     spec:
+      enableServiceLinks: false
       containers:
         - name: api
           image: openwisp/openwisp-api:latest
