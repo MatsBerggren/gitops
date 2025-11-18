@@ -54,7 +54,7 @@ spec:
               value: /var/lib/postgresql/data/pgdata
           volumeMounts:
             - name: data
-              mountPath: /var/lib/postgresql/data/pgdata
+              mountPath: /var/lib/postgresql/data
           resources:
             requests:
               cpu: "100m"
