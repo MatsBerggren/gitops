@@ -50,9 +50,11 @@ spec:
                 secretKeyRef:
                   name: openwisp-secret
                   key: DB_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           volumeMounts:
             - name: data
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql/data/pgdata
           resources:
             requests:
               cpu: "100m"
