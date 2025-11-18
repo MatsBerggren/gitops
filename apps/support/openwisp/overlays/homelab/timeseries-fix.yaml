@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openwisp-config
+  namespace: openwisp
+data:
+  TIMESERIES_DB: |
+    {
+      "ENGINE": "influxdb",
+      "NAME": "openwisp2",
+      "HOST": "openwisp-influxdb",
+      "PORT": 8086
+    }
