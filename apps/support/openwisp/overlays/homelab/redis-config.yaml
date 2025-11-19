@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+data:
+  redis.conf: |
+    save ""
+    appendonly no
+    stop-writes-on-bgsave-error no
