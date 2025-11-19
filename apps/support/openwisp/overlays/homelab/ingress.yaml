@@ -49,3 +49,4 @@ spec:
                 name: openwisp-api
                 port:
                   number: 8000
+---
