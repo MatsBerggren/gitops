@@ -44,6 +44,6 @@ data:
   OPENWISP_DASHBOARD_URL: "http://openwisp-dashboard"
   CELERY_BROKER_URL: "redis://openwisp-redis:6379/0"
 
-  UWSGI_WORKERS: "2"
-  UWSGI_THREADS: "2"
-  UWSGI_ENABLE_THREADS: "true"
+  UWSGI_PROCESSES: 2
+  UWSGI_THREADS: 2
+  UWSGI_LISTEN: 100
