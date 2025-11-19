@@ -11,7 +11,3 @@ patches:
     target:
       kind: Deployment
       name: redis
-
-patchesStrategicMerge:
-  - nginx-deploy-patch.yaml
-  - openwisp-nginx-command-patch.yaml     
