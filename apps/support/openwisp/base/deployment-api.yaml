@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api
+  namespace: openwisp
 spec:
   replicas: 1
   selector:
@@ -24,20 +25,19 @@ spec:
           env:
             - name: API_APP_PORT
               value: "8001"
+            - name: DB_HOST
+              value: "postgres"
+            - name: INFLUXDB_HOST
+              value: "influxdb"
           ports:
             - containerPort: 8001
               name: http
           volumeMounts:
-            - name: influxdb-data
-              mountPath: /var/lib/influxdb
             - name: media
               mountPath: /opt/openwisp/media
             - name: private
               mountPath: /opt/openwisp/private
       volumes:
-        - name: influxdb-data
-          persistentVolumeClaim:
-            claimName: influxdb-data
         - name: media
           persistentVolumeClaim:
             claimName: openwisp-media
