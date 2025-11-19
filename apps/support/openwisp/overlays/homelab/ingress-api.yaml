@@ -8,10 +8,10 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-dns
 spec:
   tls:
-  - hosts: ["api.support4u.se"]
+  - hosts: ["openwisp-api.support4u.se"]
     secretName: api-tls
   rules:
-  - host: api.support4u.se
+  - host: openwisp-api.support4u.se
     http:
       paths:
       - path: /
