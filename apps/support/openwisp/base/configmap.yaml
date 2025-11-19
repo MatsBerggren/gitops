@@ -16,15 +16,16 @@ data:
   DB_HOST: "openwisp-postgres"
   DB_PORT: "5432"
 
-  TIMESERIES_DB: |
+  TIMESERIES_DATABASE: |
     {
-      "ENGINE": "influxdb",
+      "BACKEND": "openwisp_monitoring.db.backends.influxdb",
+      "USER": "openwisp",
+      "PASSWORD": "openwisp",
       "NAME": "openwisp",
       "HOST": "openwisp-influxdb",
-      "PORT": 8086
+      "PORT": "8086",
+      "OPTIONS": {
+        "udp_writes": false,
+        "udp_port": 8089
+      }
     }
-
-  # --- NYTT: InfluxDB-inställningar för monitoring ---
-  INFLUXDB_NAME: "openwisp"
-  INFLUXDB_HOST: "openwisp-influxdb"
-  INFLUXDB_PORT: "8086"
