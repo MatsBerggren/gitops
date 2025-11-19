@@ -20,7 +20,7 @@ spec:
         - name: celery
           image: openwisp/openwisp-dashboard:latest
           command: ["celery"]
-          args: ["-A", "openwisp2", "worker", "-l", "info"]
+          args: ["-A", "openwisp", "worker", "-l", "info"]
           envFrom:
             - configMapRef:
                 name: openwisp-config

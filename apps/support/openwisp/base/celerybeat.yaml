@@ -19,7 +19,7 @@ spec:
         - name: celerybeat
           image: openwisp/openwisp-dashboard:latest
           command: ["celery"]
-          args: ["-A", "openwisp2", "beat", "-l", "info"]
+          args: ["-A", "openwisp", "beat", "-l", "info"]
           envFrom:
             - configMapRef:
                 name: openwisp-config

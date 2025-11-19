@@ -19,8 +19,6 @@ data:
   TIMESERIES_DATABASE: |
     {
       "BACKEND": "openwisp_monitoring.db.backends.influxdb",
-      "USER": "openwisp",
-      "PASSWORD": "openwisp",
       "NAME": "openwisp",
       "HOST": "openwisp-influxdb",
       "PORT": "8086",
