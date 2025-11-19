@@ -37,6 +37,8 @@ spec:
                 configMapKeyRef:
                   name: openwisp-env
                   key: TZ
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
               name: postgres
