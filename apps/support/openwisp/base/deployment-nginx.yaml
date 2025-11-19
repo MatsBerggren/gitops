@@ -13,36 +13,34 @@ spec:
         app: openwisp-nginx
     spec:
       containers:
-      - name: openwisp-nginx
-        image: openwisp/openwisp-nginx:latest
-        imagePullPolicy: IfNotPresent
-        envFrom:
-        - configMapRef:
-            name: openwisp-env
-        ports:
-        - name: http
-          containerPort: 80
-          protocol: TCP
-        volumeMounts:
-        - name: static
-          mountPath: /var/www/openwisp/static
-        - name: media
-          mountPath: /var/www/openwisp/media
-        - name: private
-          mountPath: /var/www/openwisp/private
-        - name: certs
-          mountPath: /etc/letsencrypt
-        resources: {}
+        - name: nginx
+          image: openwisp/openwisp-nginx:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: openwisp-env
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: static
+              mountPath: /opt/openwisp/public/static
+            - name: media
+              mountPath: /opt/openwisp/public/media
+            - name: private
+              mountPath: /opt/openwisp/public/private
+            - name: certs
+              mountPath: /etc/letsencrypt
       volumes:
-      - name: static
-        persistentVolumeClaim:
-          claimName: openwisp-static
-      - name: media
-        persistentVolumeClaim:
-          claimName: openwisp-media
-      - name: private
-        persistentVolumeClaim:
-          claimName: openwisp-private-storage
-      - name: certs
-        persistentVolumeClaim:
-          claimName: openwisp-certs
+        - name: static
+          persistentVolumeClaim:
+            claimName: openwisp-static
+        - name: media
+          persistentVolumeClaim:
+            claimName: openwisp-media
+        - name: private
+          persistentVolumeClaim:
+            claimName: openwisp-private-storage
+        - name: certs
+          persistentVolumeClaim:
+            claimName: openwisp-certs
