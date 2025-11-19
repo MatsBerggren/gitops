@@ -11,9 +11,6 @@ patches:
     target:
       kind: Deployment
       name: redis
-
-# patchesStrategicMerge converted to JSON6902-style patches
-patches:
   - path: nginx-deploy-patch.yaml
     target:
       group: apps
@@ -21,3 +18,10 @@ patches:
       kind: Deployment
       name: openwisp-nginx
       namespace: openwisp
+  - path: openwisp-nginx-command-patch.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: openwisp-nginx
+      namespace: openwisp      
