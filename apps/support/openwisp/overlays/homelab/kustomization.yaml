@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - ../../base
   - redis-config.yaml
-  - redis-pvc.yaml
 
 patches:
   - path: redis-deployment-patch.yaml
