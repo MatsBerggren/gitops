@@ -23,6 +23,8 @@ data:
   DJANGO_LANGUAGE_CODE: "en-gb"
   DB_NAME: "openwisp"
   INFLUXDB_NAME: "openwisp"
+  INFLUXDB_HOST: "influxdb"
+  INFLUXDB_PORT: "8086"
   OPENWISP_GEOCODING_CHECK: "True"
   X509_NAME_CA: "default"
   X509_NAME_CERT: "default"
