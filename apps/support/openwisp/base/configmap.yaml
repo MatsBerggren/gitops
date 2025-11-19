@@ -5,8 +5,8 @@ metadata:
   namespace: openwisp
 data:
   TZ: "Europe/Stockholm"
-  DASHBOARD_DOMAIN: "openwisp.support4u.se"
-  API_DOMAIN: "api-openwisp.support4u.se"
+  DASHBOARD_DOMAIN: "openwisp-desktop.support4u.se"
+  API_DOMAIN: "openwisp-api.support4u.se"
   VPN_DOMAIN: "openvpn-openwisp.support4u.se"
   CERT_ADMIN_EMAIL: "admin@support4u.se"
   SSL_CERT_MODE: "External"

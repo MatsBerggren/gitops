@@ -10,10 +10,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - openwisp.support4u.se
+        - openwisp-desktop.support4u.se
       secretName: openwisp-dashboard-tls
   rules:
-    - host: openwisp.support4u.se
+    - host: openwisp-desktop.support4u.se
       http:
         paths:
           - path: /
@@ -36,10 +36,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - api-openwisp.support4u.se
+        - openwisp-api.support4u.se
       secretName: openwisp-api-tls
   rules:
-    - host: api-openwisp.support4u.se
+    - host: openwisp-api.support4u.se
       http:
         paths:
           - path: /
