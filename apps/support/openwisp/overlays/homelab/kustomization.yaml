@@ -5,5 +5,3 @@ resources:
   - ../../base
   - ingress.yaml
 
-patchesStrategicMerge:
-  - timeseries-fix.yaml

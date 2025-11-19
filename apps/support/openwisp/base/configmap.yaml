@@ -10,8 +10,21 @@ data:
   VPN_DOMAIN: "openvpn-openwisp.support4u.se"
   CERT_ADMIN_EMAIL: "admin@support4u.se"
   SSL_CERT_MODE: "External"
+
   DB_NAME: "openwisp"
   DB_USER: "openwisp"
   DB_HOST: "openwisp-postgres"
   DB_PORT: "5432"
 
+  TIMESERIES_DB: |
+    {
+      "ENGINE": "influxdb",
+      "NAME": "openwisp",
+      "HOST": "openwisp-influxdb",
+      "PORT": 8086
+    }
+
+  # --- NYTT: InfluxDB-inställningar för monitoring ---
+  INFLUXDB_NAME: "openwisp"
+  INFLUXDB_HOST: "openwisp-influxdb"
+  INFLUXDB_PORT: "8086"
