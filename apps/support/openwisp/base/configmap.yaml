@@ -31,3 +31,7 @@ data:
   INFLUXDB_NAME: "openwisp"
   INFLUXDB_HOST: "openwisp-influxdb"
   INFLUXDB_PORT: "8086"
+
+  USE_OPENWISP_CELERY: "true"
+  USE_OPENWISP_CELERY_NETWORK: "true"
+  USE_OPENWISP_CELERY_MONITORING: "true"
