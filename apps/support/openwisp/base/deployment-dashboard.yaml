@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dashboard
+  namespace: openwisp
 spec:
   replicas: 1
   selector:
@@ -24,6 +25,10 @@ spec:
           env:
             - name: DASHBOARD_APP_PORT
               value: "8000"
+            - name: DB_HOST
+              value: "postgres"
+            - name: INFLUXDB_HOST
+              value: "influxdb"
           ports:
             - containerPort: 8000
               name: http
@@ -36,8 +41,6 @@ spec:
               mountPath: /opt/openwisp/private
             - name: ssh
               mountPath: /home/openwisp/.ssh
-            - name: influxdb-data
-              mountPath: /var/lib/influxdb
       volumes:
         - name: static
           persistentVolumeClaim:
@@ -51,6 +54,3 @@ spec:
         - name: ssh
           persistentVolumeClaim:
             claimName: openwisp-ssh
-        - name: influxdb-data
-          persistentVolumeClaim:
-            claimName: influxdb-data
