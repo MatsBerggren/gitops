@@ -43,3 +43,6 @@ data:
   USE_OPENWISP_CELERY_MONITORING: "true"
   OPENWISP_DASHBOARD_URL: "http://openwisp-dashboard"
   CELERY_BROKER_URL: "redis://openwisp-redis:6379/0"
+
+  UWSGI_WORKERS: "2"
+  UWSGI_THREADS: "2"
