@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: influxdb
+  name: openwisp-influxdb
   labels:
-    app: influxdb
+    app: openwisp-influxdb
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: influxdb
+      app: openwisp-influxdb
   template:
     metadata:
       labels:
-        app: influxdb
+        app: openwisp-influxdb
     spec:
       containers:
-        - name: influxdb
+        - name: openwisp-influxdb
           image: influxdb:1.8
           imagePullPolicy: IfNotPresent
           ports:
@@ -31,4 +31,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: influxdb-data
+            claimName: openwisp-influxdb-data

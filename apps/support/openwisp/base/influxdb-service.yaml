@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: openwisp-influxdb
   labels:
-    app: influxdb
+    app: openwisp-influxdb
 spec:
   selector:
-    app: influxdb
+    app: openwisp-influxdb
   ports:
     - name: http
       port: 8086
