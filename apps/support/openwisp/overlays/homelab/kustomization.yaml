@@ -3,5 +3,4 @@ kind: Kustomization
 namespace: openwisp
 resources:
   - ../../base
-  - ingress.yaml
 

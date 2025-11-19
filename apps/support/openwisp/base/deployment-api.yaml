@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: openwisp/openwisp-api:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: openwisp-env
+            - secretRef:
+                name: openwisp-secrets
+          env:
+            - name: API_APP_PORT
+              value: "8001"
+          ports:
+            - containerPort: 8001
+              name: http
+          volumeMounts:
+            - name: influxdb-data
+              mountPath: /var/lib/influxdb
+            - name: media
+              mountPath: /opt/openwisp/media
+            - name: private
+              mountPath: /opt/openwisp/private
+      volumes:
+        - name: influxdb-data
+          persistentVolumeClaim:
+            claimName: influxdb-data
+        - name: media
+          persistentVolumeClaim:
+            claimName: openwisp-media
+        - name: private
+          persistentVolumeClaim:
+            claimName: openwisp-private-storage

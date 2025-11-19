@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freeradius
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freeradius
+  template:
+    metadata:
+      labels:
+        app: freeradius
+    spec:
+      containers:
+        - name: freeradius
+          image: openwisp/openwisp-freeradius:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: openwisp-env
+            - secretRef:
+                name: openwisp-secrets
+          ports:
+            - containerPort: 1812
+              name: auth
+              protocol: UDP
+            - containerPort: 1813
+              name: acct
+              protocol: UDP

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwisp-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openwisp-nginx
+  template:
+    metadata:
+      labels:
+        app: openwisp-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: openwisp/openwisp-nginx:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: openwisp-env
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: static
+              mountPath: /opt/openwisp/public/static
+            - name: media
+              mountPath: /opt/openwisp/public/media
+            - name: private
+              mountPath: /opt/openwisp/public/private
+            - name: certs
+              mountPath: /etc/letsencrypt
+      volumes:
+        - name: static
+          persistentVolumeClaim:
+            claimName: openwisp-static
+        - name: media
+          persistentVolumeClaim:
+            claimName: openwisp-media
+        - name: private
+          persistentVolumeClaim:
+            claimName: openwisp-private-storage
+        - name: certs
+          persistentVolumeClaim:
+            claimName: openwisp-certs

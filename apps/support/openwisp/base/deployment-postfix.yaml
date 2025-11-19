@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postfix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postfix
+  template:
+    metadata:
+      labels:
+        app: postfix
+    spec:
+      containers:
+        - name: postfix
+          image: openwisp/openwisp-postfix:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: openwisp-env
+          ports:
+            - containerPort: 25
+              name: smtp
+          volumeMounts:
+            - name: certs
+              mountPath: /etc/ssl/mail
+      volumes:
+        - name: certs
+          persistentVolumeClaim:
+            claimName: openwisp-certs
