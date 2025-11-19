@@ -46,3 +46,4 @@ data:
 
   UWSGI_WORKERS: "2"
   UWSGI_THREADS: "2"
+  UWSGI_ENABLE_THREADS: "true"
