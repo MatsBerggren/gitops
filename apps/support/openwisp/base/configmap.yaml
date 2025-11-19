@@ -15,6 +15,10 @@ data:
   DB_USER: "openwisp"
   DB_HOST: "openwisp-postgres"
   DB_PORT: "5432"
+  
+  # 👇 Lägg till dessa rader:
+  REDIS_HOST: "openwisp-redis"
+  REDIS_PORT: "6379"
 
   TIMESERIES_DATABASE: |
     {
