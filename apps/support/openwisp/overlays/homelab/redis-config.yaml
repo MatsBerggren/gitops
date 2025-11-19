@@ -2,8 +2,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: redis-config
+  namespace: openwisp
 data:
   redis.conf: |
-    save ""
-    appendonly no
-    stop-writes-on-bgsave-error no
+    appendonly yes
+    maxmemory 256mb
+    maxmemory-policy allkeys-lru
