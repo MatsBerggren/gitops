@@ -1,6 +1,0 @@
-
-resources:
-  - ../../base
-  - ingress-dashboard.yaml
-  - ingress-controller.yaml
-  - ingress-api.yaml
