@@ -5,7 +5,7 @@ metadata:
   namespace: openwisp
 data:
   TZ: "Europe/Stockholm"
-  DASHBOARD_DOMAIN: "openwisp-desktop.support4u.se"
+  DASHBOARD_DOMAIN: "openwisp-dashboard.support4u.se"
   API_DOMAIN: "openwisp-api.support4u.se"
   VPN_DOMAIN: "openvpn-openwisp.support4u.se"
   CERT_ADMIN_EMAIL: "admin@support4u.se"
@@ -41,4 +41,5 @@ data:
   USE_OPENWISP_CELERY_NETWORK: "true"
   USE_OPENWISP_CELERY_FIRMWARE: "false"
   USE_OPENWISP_CELERY_MONITORING: "true"
+  OPENWISP_DASHBOARD_URL: "http://openwisp-dashboard:8000"
   CELERY_BROKER_URL: "redis://openwisp-redis:6379/0"
