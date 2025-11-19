@@ -27,3 +27,7 @@ data:
         "udp_port": 8089
       }
     }
+
+  INFLUXDB_NAME: "openwisp"
+  INFLUXDB_HOST: "openwisp-influxdb"
+  INFLUXDB_PORT: "8086"
