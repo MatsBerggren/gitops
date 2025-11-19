@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - ../../base
   - nginx-config.yaml
-  - nginx-deploy-patch.yaml
   - redis-config.yaml
 
 patches:
@@ -12,3 +11,7 @@ patches:
     target:
       kind: Deployment
       name: redis
+
+patchesStrategicMerge:
+  # Patch the existing openwisp-nginx Deployment to mount our config
+  - nginx-deploy-patch.yaml
