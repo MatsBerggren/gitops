@@ -1,17 +1,11 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: openwisp-nginx
-  namespace: openwisp
-spec:
-  template:
-    spec:
-      volumes:
-      - name: nginx-config
-        configMap:
-          name: openwisp-nginx-config
-      containers:
-      - name: openwisp-nginx
-        volumeMounts:
-        - name: nginx-config
-          mountPath: /etc/nginx/conf.d
+- op: add
+  path: /spec/template/spec/volumes
+  value:
+    - name: nginx-config
+      configMap:
+        name: openwisp-nginx-config
+- op: add
+  path: /spec/template/spec/containers/0/volumeMounts
+  value:
+    - name: nginx-config
+      mountPath: /etc/nginx/conf.d

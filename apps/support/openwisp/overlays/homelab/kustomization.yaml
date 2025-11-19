@@ -12,6 +12,12 @@ patches:
       kind: Deployment
       name: redis
 
-patchesStrategicMerge:
-  # Patch the existing openwisp-nginx Deployment to mount our config
-  - nginx-deploy-patch.yaml
+# patchesStrategicMerge converted to JSON6902-style patches
+patches:
+  - path: nginx-deploy-patch.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: openwisp-nginx
+      namespace: openwisp
