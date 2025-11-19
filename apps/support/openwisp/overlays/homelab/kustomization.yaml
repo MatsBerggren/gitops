@@ -11,17 +11,7 @@ patches:
     target:
       kind: Deployment
       name: redis
-  - path: nginx-deploy-patch.yaml
-    target:
-      group: apps
-      version: v1
-      kind: Deployment
-      name: openwisp-nginx
-      namespace: openwisp
-  - path: openwisp-nginx-command-patch.yaml
-    target:
-      group: apps
-      version: v1
-      kind: Deployment
-      name: openwisp-nginx
-      namespace: openwisp      
+
+patchesStrategicMerge:
+  - nginx-deploy-patch.yaml
+  - openwisp-nginx-command-patch.yaml     

@@ -1,11 +1,17 @@
-- op: add
-  path: /spec/template/spec/volumes
-  value:
-    - name: nginx-config
-      configMap:
-        name: openwisp-nginx-config
-- op: add
-  path: /spec/template/spec/containers/0/volumeMounts
-  value:
-    - name: nginx-config
-      mountPath: /etc/nginx/conf.d
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwisp-nginx
+  namespace: openwisp
+spec:
+  template:
+    spec:
+      containers:
+        - name: openwisp-nginx
+          volumeMounts:
+            - name: openwisp-nginx-config
+              mountPath: /etc/nginx/conf.d
+      volumes:
+        - name: openwisp-nginx-config
+          configMap:
+            name: openwisp-nginx-config
