@@ -11,6 +11,10 @@ data:
   CERT_ADMIN_EMAIL: "admin@support4u.se"
   SSL_CERT_MODE: "External"
 
+
+  USE_OPENWISP_FIRMWARE: "false"
+  USE_OPENWISP_CELERY_FIRMWARE: "false"
+
   DB_NAME: "openwisp"
   DB_USER: "openwisp"
   DB_HOST: "openwisp-postgres"
