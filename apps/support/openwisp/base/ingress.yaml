@@ -9,11 +9,11 @@ spec:
   tls:
     - secretName: support4u-se-tls
       hosts:
-        - dashboard.support4u.se
-        - api.support4u.se
-        - openvpn.support4u.se
+        - dashboard.openwisp.support4u.se
+        - api.openwisp.support4u.se
+        - openvpn.openwisp.support4u.se
   rules:
-    - host: dashboard.support4u.se
+    - host: dashboard.openwisp.support4u.se
       http:
         paths:
           - path: /
@@ -24,7 +24,7 @@ spec:
                 port:
                   number: 80
 
-    - host: api.support4u.se
+    - host: api.openwisp.support4u.se
       http:
         paths:
           - path: /
@@ -35,7 +35,7 @@ spec:
                 port:
                   number: 80
 
-    - host: openvpn.support4u.se
+    - host: openvpn.openwisp.support4u.se
       http:
         paths:
           - path: /
