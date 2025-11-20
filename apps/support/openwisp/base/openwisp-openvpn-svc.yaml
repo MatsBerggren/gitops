@@ -4,7 +4,7 @@ metadata:
   name: openwisp-openvpn
   namespace: openwisp
   annotations:
-    metallb.universe.tf/address-pool: default    # ändra om du har annan pool
+    metallb.universe.tf/address-pool: lb-pool    # ändra om du har annan pool
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Cluster
