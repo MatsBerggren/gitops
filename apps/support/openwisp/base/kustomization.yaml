@@ -6,4 +6,5 @@ resources:
   - endpoints.yaml
   - namespace.yaml
   - ingress.yaml
+  - openwisp-openvpn-svc.yaml
 
