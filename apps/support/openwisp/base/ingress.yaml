@@ -22,7 +22,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: dashboard
+                name: openwisp-service
                 port:
                   number: 80
 
@@ -33,7 +33,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: api
+                name: openwisp-service
                 port:
                   number: 80
 
@@ -44,6 +44,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: openvpn
+                name: openwisp-service
                 port:
                   number: 80
