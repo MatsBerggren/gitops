@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openwisp-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+spec:
+  ingressClassName: nginx
+  tls:
+    - secretName: support4u-se-tls
+      hosts:
+        - dashboard.support4u.se
+        - api.support4u.se
+        - openvpn.support4u.se
+  rules:
+    - host: dashboard.support4u.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dashboard
+                port:
+                  number: 80
+
+    - host: api.support4u.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 80
+
+    - host: openvpn.support4u.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: openvpn
+                port:
+                  number: 80
