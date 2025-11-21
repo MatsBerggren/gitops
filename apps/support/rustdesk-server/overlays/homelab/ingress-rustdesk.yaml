@@ -4,13 +4,14 @@ metadata:
   name: rustdesk
   namespace: rustdesk
   annotations:
-    # Anpassa dessa beroende på vilken ingress-controller du har
+    # Anpassa denna till din ingress-controller och cert-manager
     cert-manager.io/cluster-issuer: letsencrypt-dns
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
 spec:
-  ingressClassName: nginx  # eller traefik, haproxy, osv
+  # Byt om du kör t.ex. traefik istället för nginx
+  ingressClassName: nginx
   tls:
     - hosts:
         - rustdesk.support4u.se
@@ -25,4 +26,4 @@ spec:
               service:
                 name: rustdesk
                 port:
-                  number: 21118   # web-hbbs
+                  number: 21118
