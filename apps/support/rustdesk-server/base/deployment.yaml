@@ -26,8 +26,7 @@ spec:
 
         - name: hbbs
           image: rustdesk/rustdesk-server:latest
-#          args: ["hbbs","-k","_"]
-          args: ["hbbs"]
+          args: ["hbbs","-k","dzpGVLFswoRhE83RhkU4kgmzI3YEEyTBoYw9beUinGc="]
           ports:
             - { name: rendezvous, containerPort: 21115, protocol: TCP }
             - { name: nat-tcp,   containerPort: 21116, protocol: TCP }
