@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rustdesk
+  namespace: rustdesk
+  annotations:
+    # Anpassa dessa beroende på vilken ingress-controller du har
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  ingressClassName: nginx  # eller traefik, haproxy, osv
+  tls:
+    - hosts:
+        - rustdesk.support4u.se
+      secretName: rustdesk-tls
+  rules:
+    - host: rustdesk.support4u.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rustdesk
+                port:
+                  number: 21118   # web-hbbs
