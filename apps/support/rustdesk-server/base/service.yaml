@@ -6,7 +6,7 @@ spec:
   type: LoadBalancer
   selector:
     app: rustdesk-server
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
   ports:
     - name: rendezvous
       port: 21115

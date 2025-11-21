@@ -6,5 +6,5 @@ resources:
   - ../../base
   - ingress-rustdesk.yaml
 
-patches:
-  - path: patch-service.yaml
+#patches:
+#  - path: patch-service.yaml
