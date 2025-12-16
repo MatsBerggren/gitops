@@ -19,6 +19,25 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+      initContainers:
+        - name: install-meshctrl
+          image: node:20-alpine
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-lc"]
+          args:
+            - |
+              cd /data
+              if [ ! -f package.json ]; then
+                npm init -y >/dev/null
+              fi
+              npm install --no-fund --no-audit meshcentral
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: nodered-data
+              mountPath: /data
       containers:
         - name: nodered
           image: nodered/node-red:latest
