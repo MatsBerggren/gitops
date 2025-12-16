@@ -22,19 +22,24 @@ spec:
       initContainers:
         - name: install-meshctrl
           image: node:20-alpine
-          imagePullPolicy: IfNotPresent
-          command: ["sh", "-lc"]
+          env:
+            - name: NODE_OPTIONS
+              value: "--dns-result-order=ipv4first"
+          command: ["sh","-lc"]
           args:
             - |
+              set -e
               cd /data
-              if [ ! -f package.json ]; then
-                npm init -y >/dev/null
-              fi
-              npm install --no-fund --no-audit meshcentral
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
+              if [ ! -f package.json ]; then npm init -y >/dev/null; fi
+
+              # retry loop (DNS/egress kan vara lite fladdrigt vid start)
+              for i in 1 2 3 4 5; do
+                echo "npm install attempt $i/5"
+                npm install --no-fund --no-audit meshcentral && break
+                sleep 5
+              done
+
+              test -f /data/node_modules/meshcentral/meshctrl
           volumeMounts:
             - name: nodered-data
               mountPath: /data
