@@ -39,7 +39,9 @@ spec:
               echo "npm installing meshcentral to get meshctrl..."
               npm install --no-fund --no-audit meshcentral
               echo "Test..."
-              test -f /data/node_modules/meshcentral/meshctrl
+              ls -la /data/node_modules/meshcentral | head -n 50
+              ls -la /data/node_modules/.bin | grep -i mesh || true
+              node /data/node_modules/meshcentral/meshctrl.js help >/dev/null
           volumeMounts:
             - name: nodered-data
               mountPath: /data
