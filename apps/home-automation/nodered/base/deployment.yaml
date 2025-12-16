@@ -36,14 +36,9 @@ spec:
               set -e
               cd /data
               if [ ! -f package.json ]; then npm init -y >/dev/null; fi
-
-              # retry loop (DNS/egress kan vara lite fladdrigt vid start)
-              for i in 1 2 3 4 5; do
-                echo "npm install attempt $i/5"
-                npm install --no-fund --no-audit meshcentral && break
-                sleep 5
-              done
-
+              echo "npm installing meshcentral to get meshctrl..."
+              npm install --no-fund --no-audit meshcentral
+              echo "Test..."
               test -f /data/node_modules/meshcentral/meshctrl
           volumeMounts:
             - name: nodered-data
