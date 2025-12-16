@@ -15,6 +15,11 @@ spec:
       labels:
         app: nodered
     spec:
+      dnsConfig:
+        options:
+          - name: single-request-reopen
+          - name: ndots
+            value: "1"
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
