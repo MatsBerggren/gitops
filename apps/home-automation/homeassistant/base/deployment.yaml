@@ -49,16 +49,16 @@ spec:
             - { name: tcp-1400,   containerPort: 1400, protocol: TCP }
           volumeMounts:
             # Mounta stabila seriella länkar
-            - { name: cp210x, mountPath: /dev/ttyUSB0 }
+            #- { name: cp210x, mountPath: /dev/ttyUSB0 }
             # Dina befintliga PVC:er
             - { name: homeassistant-config, mountPath: /config }
             - { name: homeassistant-media,  mountPath: /media/cameras }
       volumes:
         # Viktigt: montera katalogen, inte en fil/symlink
-        - name: cp210x
-          hostPath:
-            path: /dev/ttyUSB0   # byt till rätt enhet
-            type: CharDevice
+        #- name: cp210x
+        #  hostPath:
+        #    path: /dev/ttyUSB0   # byt till rätt enhet
+        #    type: CharDevice
         - name: homeassistant-config
           persistentVolumeClaim:
             claimName: ha-config-restore-old
