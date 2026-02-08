@@ -16,6 +16,8 @@ spec:
         - name: frigate
           image: ghcr.io/blakeblackshear/frigate:stable
           imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true  # Required for GPU access
           ports:
             - containerPort: 5000  # UI/API
             - containerPort: 8554  # RTSP restream (optional)
@@ -23,6 +25,8 @@ spec:
           env:
             - name: FRIGATE_CONFIG_FILE
               value: /config/config.yaml
+            - name: LIBVA_DRIVER_NAME
+              value: i965  # Intel Quick Sync driver
           volumeMounts:
             - name: config
               mountPath: /config
@@ -32,6 +36,8 @@ spec:
               mountPath: /media/frigate
             - name: shm
               mountPath: /dev/shm
+            - name: dri
+              mountPath: /dev/dri  # Intel GPU device
           resources:
             requests:
               cpu: "500m"
@@ -53,3 +59,6 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 512Mi
+        - name: dri
+          hostPath:
+            path: /dev/dri  # Intel GPU device for hardware acceleration
