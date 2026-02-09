@@ -14,6 +14,8 @@ spec:
       labels:
         app: influxdb
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker-01  # Pin to node with cached image (avoid Docker Hub 504)
       # Hjälper NFS-volymer med rätt rättigheter (Influx kör som uid 1000)
       securityContext:
         fsGroup: 1000
