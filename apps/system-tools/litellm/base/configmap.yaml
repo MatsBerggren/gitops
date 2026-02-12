@@ -19,7 +19,7 @@ data:
     router_settings:
       routing_strategy: simple-shuffle
       num_retries: 1
-      timeout: 30
+      timeout: 180
 
     # Model routing
     # Primary = local Ollama (cheap). Fallback = OpenAI (only when needed).
