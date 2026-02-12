@@ -27,7 +27,7 @@ data:
       - model_name: local
         litellm_params:
           model: ollama/qwen2.5:7b-instruct-q4_K_M
-          api_base: http://ollama:11434
+          api_base: http://ollama.ollama.svc.cluster.local:11434
         # Cost controls
         rpm: 60
         tpm: 200000
