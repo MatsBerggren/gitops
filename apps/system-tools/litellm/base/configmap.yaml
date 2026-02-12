@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litellm-config
+data:
+  config.yaml: |
+    # LiteLLM config
+    # Docs: https://docs.litellm.ai/docs/proxy/configs
+
+    general_settings:
+      # Reject requests without key
+      master_key_env: LITELLM_MASTER_KEY
+
+    litellm_settings:
+      # Be strict about unknown params (helps prevent accidental token waste)
+      drop_params: true
+      set_verbose: false
+
+    router_settings:
+      routing_strategy: simple-shuffle
+      num_retries: 1
+      timeout: 30
+
+    # Model routing
+    # Primary = local Ollama (cheap). Fallback = OpenAI (only when needed).
+    model_list:
+      - model_name: local
+        litellm_params:
+          model: ollama/qwen2.5:7b-instruct-q4_K_M
+          api_base: http://ollama:11434
+        # Cost controls
+        rpm: 60
+        tpm: 200000
+
+      - model_name: gpt
+        litellm_params:
+          model: openai/gpt-5.2
+          api_key: os.environ/OPENAI_API_KEY
+        rpm: 30
+        tpm: 60000
+
+    # Default model for clients who don't specify one
+    default_model: local
+
+    # Fallbacks: if local fails, try gpt
+    fallbacks:
+      local: [gpt]

@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litellm
+spec:
+  template:
+    spec:
+      # Keep it flexible; you can pin to a node later if you want
+      containers:
+        - name: litellm
+          env:
+            # Default safety: limit max tokens unless overridden by client.
+            - name: LITELLM_DEFAULT_MAX_TOKENS
+              value: "512"
+            # Prevent runaway costs on fallback provider
+            - name: LITELLM_DEFAULT_TIMEOUT
+              value: "30"
