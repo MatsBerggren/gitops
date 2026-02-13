@@ -8,8 +8,12 @@ data:
     # Docs: https://docs.litellm.ai/docs/proxy/configs
 
     general_settings:
-      # Reject requests without key
+      # Master key for API authentication
       master_key_env: LITELLM_MASTER_KEY
+      # Database is now configured - enable features
+      disable_spend_logs: false
+      enable_jwt_auth: false
+      store_model_in_db: true
 
     litellm_settings:
       # Be strict about unknown params (helps prevent accidental token waste)
