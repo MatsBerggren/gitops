@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openclaw-external
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: 10.10.30.104
+  ports:
+    - port: 18789
+      targetPort: 18789
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openclaw
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: openclaw.support4u.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: openclaw-external
+                port:
+                  number: 18789
+  tls:
+    - hosts:
+        - openclaw.support4u.se
+      secretName: tls-openclaw
