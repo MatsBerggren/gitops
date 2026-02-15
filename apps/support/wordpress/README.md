@@ -3,9 +3,9 @@
 ## What’s inside
 - MariaDB (StatefulSet) with **tcpSocket** startup/readiness/liveness probes
 - WordPress (Deployment) with **initContainer** waiting for DB using **app-user SELECT 1**
-- Storage: **longhorn** in base
-  - MariaDB PVC: RWO on `longhorn`
-  - wp-content PVC: **RWX** on `longhorn` (share-manager)
+- Storage: **ceph** in base
+  - MariaDB PVC: RWO on `ceph-rbd`
+  - wp-content PVC: **RWX on `cephfs-fuse`
 - Ingress prefilled for `wordpress.support4u.se`
 
 ## Apply

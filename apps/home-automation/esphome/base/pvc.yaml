@@ -7,7 +7,7 @@ metadata:
     app: esphome
 spec:
   accessModes: [ ReadWriteOnce ]
-  storageClassName: longhorn
+  storageClassName: ceph-rbd
   resources:
     requests:
       storage: 10Gi

@@ -10,4 +10,4 @@ spec:
     requests:
       storage: 10Gi
   # Kommentera bort raden nedan om Longhorn är default
-  storageClassName: longhorn
+  storageClassName: ceph-rbd
