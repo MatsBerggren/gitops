@@ -59,7 +59,7 @@ spec:
         #    type: CharDevice
         - name: homeassistant-config
           persistentVolumeClaim:
-            claimName: ha-config-restore-old
+            claimName: homeassistant-config-ceph
         - name: homeassistant-media
           persistentVolumeClaim:
             claimName: homeassistant-claim1

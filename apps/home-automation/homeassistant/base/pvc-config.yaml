@@ -1,13 +1,17 @@
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ha-config-restore-old
+  name: homeassistant-config-ceph
   labels:
     app: homeassistant
+  annotations:
+    # If you're using Argo CD, this prevents the PVC from being pruned (deleted)
+    # even if it is temporarily removed/renamed in git.
+    argocd.argoproj.io/sync-options: Prune=false
 spec:
-  accessModes: [ ReadWriteOnce ]
+  accessModes:
+    - ReadWriteOnce
   storageClassName: ceph-rbd
   resources:
     requests:
-      storage: 50Gi
+      storage: 60Gi
