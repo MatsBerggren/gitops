@@ -145,7 +145,7 @@ spec:
           emptyDir: {}
         - name: wp-content
           persistentVolumeClaim:
-            claimName: wp-content
+            claimName: wp-content-rbd
         - name: php-ini
           configMap:
             name: wp-php-ini
@@ -159,8 +159,8 @@ metadata:
   name: wp-content
   namespace: wordpress
 spec:
-  accessModes: ["ReadWriteOnce"]
-  storageClassName: ceph-rbd
+  accessModes: ["ReadWriteMany"]
+  storageClassName: cephfs-fuse
   resources:
     requests:
-      storage: 10Gi
+      storage: 5Gi

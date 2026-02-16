@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wp-content-migrate-to-rbd
+  namespace: wordpress
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: alpine:3.20
+          command: ["sh","-lc"]
+          args:
+            - |
+              set -e
+              apk add --no-cache rsync >/dev/null
+              echo "Starting rsync from cephfs -> rbd"
+              # -a preserves perms/times; --delete makes target mirror source
+              rsync -aHAX --numeric-ids --delete /src/ /dst/
+              echo "Done"
+          volumeMounts:
+            - name: src
+              mountPath: /src
+            - name: dst
+              mountPath: /dst
+      volumes:
+        - name: src
+          persistentVolumeClaim:
+            claimName: wp-content
+        - name: dst
+          persistentVolumeClaim:
+            claimName: wp-content-rbd

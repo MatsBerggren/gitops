@@ -11,4 +11,5 @@ resources:
   - redis-statefulset.yaml
   - wordpress-service.yaml
   - wordpress-deployment.yaml
+  - wp-content-rbd-pvc.yaml
   - ingress.yaml

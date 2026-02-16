@@ -6,6 +6,9 @@ resources:
   - ../../base
   - mariadb-tuning-configmap.yaml
   - wp-php-ini-configmap.yaml
+  # One-shot migration job: run once, then delete/disable.
+  - wp-content-migrate-job.yaml
+  - wp-nginx-configmap.yaml
   - wp-nginx-configmap.yaml
 
 patches:
