@@ -9,7 +9,6 @@ resources:
   # One-shot migration job: run once, then delete/disable.
   - wp-content-migrate-job.yaml
   - wp-nginx-configmap.yaml
-  - wp-nginx-configmap.yaml
 
 patches:
   # 1) Resurser (CPU/MEM) för Wordpress
