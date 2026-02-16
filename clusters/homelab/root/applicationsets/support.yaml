@@ -25,6 +25,13 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{path.basename}}'
+      ignoreDifferences:
+        # k3s/apiserver can end up persisting status fields inside volumeClaimTemplates on StatefulSets.
+        # They are not part of our desired state and can cause perpetual OutOfSync.
+        - group: apps
+          kind: StatefulSet
+          jqPathExpressions:
+            - .spec.volumeClaimTemplates[].status
       syncPolicy:
         automated:
           prune: false
