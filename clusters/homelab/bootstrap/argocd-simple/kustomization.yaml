@@ -8,3 +8,6 @@ resources:
   - https://raw.githubusercontent.com/argoproj/argo-cd/v3.1.0/manifests/install.yaml
   - ingress.yaml
   - certificate.yaml
+
+patchesStrategicMerge:
+  - argocd-cm-patch.yaml

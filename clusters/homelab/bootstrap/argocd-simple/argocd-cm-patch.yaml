@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  # Ignore status fields that can be persisted under StatefulSet volumeClaimTemplates
+  # (seen on k3s) and otherwise cause perpetual OutOfSync.
+  resource.customizations.ignoreDifferences.apps_StatefulSet: |
+    jqPathExpressions:
+      - .spec.volumeClaimTemplates[].status
