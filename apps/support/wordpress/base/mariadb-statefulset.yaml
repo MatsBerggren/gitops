@@ -5,6 +5,16 @@ metadata:
 spec:
   serviceName: mariadb
   replicas: 1
+  podManagementPolicy: OrderedReady
+  revisionHistoryLimit: 10
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+      maxUnavailable: 1
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
   selector:
     matchLabels:
       app: mariadb
@@ -20,10 +30,13 @@ spec:
       containers:
         - name: mariadb
           image: mariadb:11.4
+          imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
+          resources: {}
           ports:
             - containerPort: 3306
+              protocol: TCP
           env:
             - name: MARIADB_ROOT_PASSWORD
               valueFrom:
@@ -54,18 +67,21 @@ spec:
             periodSeconds: 5
             failureThreshold: 120
             timeoutSeconds: 2
+            successThreshold: 1
           readinessProbe:
             tcpSocket:
               port: 3306
             periodSeconds: 5
             failureThreshold: 60
             timeoutSeconds: 2
+            successThreshold: 1
           livenessProbe:
             tcpSocket:
               port: 3306
             periodSeconds: 10
             failureThreshold: 12
             timeoutSeconds: 3
+            successThreshold: 1
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -74,6 +90,7 @@ spec:
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd
+        volumeMode: Filesystem
         resources:
           requests:
             storage: 10Gi

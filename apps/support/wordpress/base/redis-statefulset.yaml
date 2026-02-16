@@ -8,6 +8,16 @@ spec:
       app: redis
   serviceName: redis
   replicas: 1
+  podManagementPolicy: OrderedReady
+  revisionHistoryLimit: 10
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+      maxUnavailable: 1
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
   template:
     metadata:
       labels:
@@ -28,6 +38,7 @@ spec:
           ports:
             - containerPort: 6379
               name: redis
+              protocol: TCP
           env:
             - name: REDIS_PASSWORD
               valueFrom:
@@ -57,6 +68,9 @@ spec:
             tcpSocket: { port: 6379 }
             initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
           readinessProbe:
             exec:
               command:
@@ -65,10 +79,15 @@ spec:
                 - redis-cli -a "$REDIS_PASSWORD" ping | grep -q PONG
             initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
           startupProbe:
             tcpSocket: { port: 6379 }
             periodSeconds: 5
             failureThreshold: 12
+            timeoutSeconds: 1
+            successThreshold: 1
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -77,6 +96,7 @@ spec:
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd
+        volumeMode: Filesystem
         resources:
           requests:
             storage: 2Gi
