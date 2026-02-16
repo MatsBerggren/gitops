@@ -18,6 +18,21 @@ spec:
       terminationGracePeriodSeconds: 60
 
       initContainers:
+        - name: fix-perms
+          image: alpine:3.20
+          command: ["sh","-lc"]
+          args:
+            - |
+              set -e
+              # Ensure WordPress can install plugins/themes and run updates
+              chown -R 33:33 /var/www/html/wp-content
+              chmod -R u+rwX,g+rwX,o-rwx /var/www/html/wp-content
+              mkdir -p /var/www/html/wp-content/{plugins,upgrade,uploads}
+              chown -R 33:33 /var/www/html/wp-content
+          volumeMounts:
+            - name: wp-content
+              mountPath: /var/www/html/wp-content
+
         - name: wait-for-db
           image: mariadb:11.4
           env:
