@@ -42,7 +42,9 @@ spec:
               set -e
               # Ensure WordPress can install plugins/themes and run updates
               chown -R 33:33 /var/www/html/wp-content
-              chmod -R u+rwX,g+rwX,o-rwx /var/www/html/wp-content
+              # Nginx container runs as uid/gid 101 in nginx:alpine by default.
+              # Make wp-content world-readable so nginx can serve static files (uploads, themes, plugin assets).
+              chmod -R u+rwX,g+rwX,o+rX /var/www/html/wp-content
               mkdir -p /var/www/html/wp-content/{plugins,upgrade,uploads}
               chown -R 33:33 /var/www/html/wp-content
           volumeMounts:
