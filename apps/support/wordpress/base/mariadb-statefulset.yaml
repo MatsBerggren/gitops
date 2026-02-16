@@ -23,6 +23,9 @@ spec:
       labels:
         app: mariadb
     spec:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
       terminationGracePeriodSeconds: 60
       securityContext:
         seccompProfile:
@@ -58,6 +61,8 @@ spec:
                 secretKeyRef:
                   name: mariadb-secret
                   key: mariadb-password
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
           volumeMounts:
             - name: data
               mountPath: /var/lib/mysql
@@ -91,6 +96,8 @@ spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd
         volumeMode: Filesystem
+        status:
+          phase: Pending
         resources:
           requests:
             storage: 10Gi
