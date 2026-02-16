@@ -64,7 +64,6 @@ spec:
             periodSeconds: 5
             failureThreshold: 12
   volumeClaimTemplates:
-    # (A) Vill du att Argo slutar “diffa”: behåll apiVersion/kind här.
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
@@ -75,4 +74,3 @@ spec:
         resources:
           requests:
             storage: 2Gi
-    # (B) Alternativ: ta bort apiVersion/kind om du hellre använder Argo ignoreDifferences.

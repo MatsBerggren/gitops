@@ -17,5 +17,5 @@ data:
     opcache.validate_timestamps=1
     opcache.revalidate_freq=2
 
-    session.save_handler=redis
-    session.save_path="tcp://redis.wordpress.svc.cluster.local:6379"
+    ; NOTE: Do not use redis for PHP sessions in WordPress by default.
+    ; It can cause hard-to-debug latency/timeouts.

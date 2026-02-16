@@ -5,6 +5,8 @@ metadata:
   namespace: wordpress
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: wordpress
@@ -14,6 +16,7 @@ spec:
         app: wordpress
     spec:
       terminationGracePeriodSeconds: 60
+
       initContainers:
         - name: wait-for-db
           image: mariadb:11.4
@@ -44,11 +47,24 @@ spec:
               echo "Waiting for DB (app-user SELECT 1)..."
               until mariadb -h "$DB" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" -N -e "SELECT 1" >/dev/null 2>&1; do sleep 2; done
               echo "DB ready."
+
+        - name: init-wp
+          image: wordpress:6.9.1-php8.3-fpm
+          command: ["sh","-lc"]
+          args:
+            - |
+              set -e
+              cp -a /usr/src/wordpress/. /workdir/
+          volumeMounts:
+            - name: wp-core
+              mountPath: /workdir
+
       containers:
-        - name: wordpress
-          image: wordpress:6.8.3-php8.3-apache
+        - name: php-fpm
+          image: wordpress:6.9.1-php8.3-fpm
           ports:
-            - containerPort: 80
+            - containerPort: 9000
+              name: fpm
           env:
             - name: WORDPRESS_DB_HOST
               value: "mariadb.wordpress.svc.cluster.local:3306"
@@ -67,36 +83,75 @@ spec:
                 secretKeyRef:
                   name: mariadb-secret
                   key: mariadb-database
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-auth
+                  key: redis-password
+            - name: WP_CACHE_KEY_SALT
+              value: "wp:www.taberg.info:"
             - name: WORDPRESS_CONFIG_EXTRA
               value: |
-                @ini_set( 'upload_max_filesize', '600M' );
-                @ini_set( 'post_max_size', '600M' );
-                @ini_set( 'max_execution_time', '0'  );
-                @ini_set( 'max_input_time', '300' );
-                @ini_set( 'memory_limit', '512M' );
+                if (!defined('WP_REDIS_HOST'))  define('WP_REDIS_HOST', getenv('REDIS_HOST'));
+                if (!defined('WP_REDIS_PORT'))  define('WP_REDIS_PORT', intval(getenv('REDIS_PORT') ?: '6379'));
+                if (!defined('WP_REDIS_PASSWORD')) define('WP_REDIS_PASSWORD', getenv('REDIS_PASSWORD') ?: null);
+                if (!defined('WP_CACHE_KEY_SALT')) define('WP_CACHE_KEY_SALT', getenv('WP_CACHE_KEY_SALT') ?: 'wp:site:');
+                if (!defined('WP_REDIS_DATABASE')) define('WP_REDIS_DATABASE', 0);
+                if (!defined('WP_CACHE')) define('WP_CACHE', true);
+                if (!defined('DISABLE_WP_CRON')) define('DISABLE_WP_CRON', true);
+                if (!defined('FS_METHOD')) define('FS_METHOD', 'direct');
           volumeMounts:
+            - name: wp-core
+              mountPath: /var/www/html
             - name: wp-content
               mountPath: /var/www/html/wp-content
-          startupProbe:
-            tcpSocket: { port: 80 }
-            periodSeconds: 5
-            failureThreshold: 120
-            timeoutSeconds: 2
-          readinessProbe:
-            httpGet:
-              path: /readme.html   # lätt statisk fil
-              port: 80
-            periodSeconds: 5
-            failureThreshold: 12
-            timeoutSeconds: 10
-          lifecycle:
-            preStop:
-              exec:
-                command: ["sh","-c","sleep 5"]
+            - name: php-ini
+              mountPath: /usr/local/etc/php/conf.d/00-custom.ini
+              subPath: 00-custom.ini
+
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: wp-core
+              mountPath: /var/www/html
+            - name: wp-content
+              mountPath: /var/www/html/wp-content
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+
+      startupProbe:
+        tcpSocket: { port: 8080 }
+        periodSeconds: 5
+        failureThreshold: 120
+        timeoutSeconds: 2
+      readinessProbe:
+        httpGet:
+          path: /readme.html
+          port: 8080
+        periodSeconds: 5
+        failureThreshold: 12
+        timeoutSeconds: 10
+
       volumes:
+        - name: wp-core
+          emptyDir: {}
         - name: wp-content
           persistentVolumeClaim:
             claimName: wp-content
+        - name: php-ini
+          configMap:
+            name: wp-php-ini
+        - name: nginx-conf
+          configMap:
+            name: wp-nginx
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -104,8 +159,8 @@ metadata:
   name: wp-content
   namespace: wordpress
 spec:
-  accessModes: ["ReadWriteMany"]
-  storageClassName: cephfs-fuse
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: ceph-rbd
   resources:
     requests:
-      storage: 5Gi
+      storage: 10Gi

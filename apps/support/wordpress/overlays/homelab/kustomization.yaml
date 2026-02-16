@@ -6,6 +6,7 @@ resources:
   - ../../base
   - mariadb-tuning-configmap.yaml
   - wp-php-ini-configmap.yaml
+  - wp-nginx-configmap.yaml
 
 patches:
   # 1) Resurser (CPU/MEM) för Wordpress
@@ -32,14 +33,5 @@ patches:
       group: networking.k8s.io
       version: v1
       kind: Ingress
-      name: wordpress
-      namespace: wordpress
-
-  # 4) PHP-ini/ConfigMap mount
-  - path: wordpress-php-ini-patch.yaml
-    target:
-      group: apps
-      version: v1
-      kind: Deployment
       name: wordpress
       namespace: wordpress

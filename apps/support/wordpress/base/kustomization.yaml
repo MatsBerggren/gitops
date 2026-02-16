@@ -6,6 +6,9 @@ resources:
   - secret-mariadb.yaml
   - mariadb-service.yaml
   - mariadb-statefulset.yaml
+  - redis-secret.yaml
+  - redis-service.yaml
+  - redis-statefulset.yaml
   - wordpress-service.yaml
   - wordpress-deployment.yaml
   - ingress.yaml
