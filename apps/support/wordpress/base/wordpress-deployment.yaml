@@ -132,6 +132,8 @@ spec:
               value: |
                 if (!defined('DISABLE_WP_CRON')) define('DISABLE_WP_CRON', true);
                 if (!defined('FS_METHOD')) define('FS_METHOD', 'direct');
+                // All-in-One WP Migration file size limit (2 GiB)
+                if (!defined('AI1WM_MAX_FILE_SIZE')) define('AI1WM_MAX_FILE_SIZE', 2 * 1024 * 1024 * 1024);
                 if (!defined('WP_REDIS_HOST')) define('WP_REDIS_HOST', getenv('REDIS_HOST'));
                 if (!defined('WP_REDIS_PORT')) define('WP_REDIS_PORT', intval(getenv('REDIS_PORT') ?: '6379'));
                 if (!defined('WP_REDIS_PASSWORD')) define('WP_REDIS_PASSWORD', getenv('REDIS_PASSWORD') ?: null);

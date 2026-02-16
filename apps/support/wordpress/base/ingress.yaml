@@ -5,7 +5,7 @@ metadata:
   namespace: wordpress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns
-    nginx.ingress.kubernetes.io/proxy-body-size: "650m"
+    nginx.ingress.kubernetes.io/proxy-body-size: "2048m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
     nginx.ingress.kubernetes.io/client-body-timeout: "300"

@@ -12,7 +12,7 @@ data:
       root /var/www/html;
       index index.php index.html;
 
-      client_max_body_size 650m;
+      client_max_body_size 2048m;
 
       location / {
         try_files $uri $uri/ /index.php?$args;
