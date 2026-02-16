@@ -213,16 +213,3 @@ spec:
         - name: nginx-conf
           configMap:
             name: wp-nginx
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: wp-content
-  namespace: wordpress
-spec:
-  accessModes: ["ReadWriteOnce"]
-  storageClassName: ceph-rbd
-  resources:
-    requests:
-      storage: 10Gi

@@ -16,7 +16,7 @@ resources:
   - redis-statefulset.yaml
 
   # WordPress
-  - wp-content-rbd-pvc.yaml
+  - wp-content-pvc.yaml
   - wp-php-ini-configmap.yaml
   - wp-nginx-configmap.yaml
   - wordpress-service.yaml

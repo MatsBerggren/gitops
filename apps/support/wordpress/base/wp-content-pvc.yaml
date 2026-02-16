@@ -1,8 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: wp-content-rbd
-  namespace: wordpress
+  name: wp-content
 spec:
   accessModes: ["ReadWriteOnce"]
   storageClassName: ceph-rbd
