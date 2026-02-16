@@ -17,5 +17,4 @@ data:
     opcache.validate_timestamps=1
     opcache.revalidate_freq=2
 
-    ; NOTE: Do not use redis for PHP sessions in WordPress by default.
-    ; It can cause hard-to-debug latency/timeouts.
+    ; WordPress behöver normalt inte PHP-sessions. Undvik Redis-sessions här.

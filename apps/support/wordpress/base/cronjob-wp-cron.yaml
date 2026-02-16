@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: wp-cron
+  namespace: wordpress
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: curl
+              image: curlimages/curl:8.12.1
+              args: ["-sS","-m","60","http://wordpress.wordpress.svc.cluster.local/wp-cron.php?doing_wp_cron=1"]

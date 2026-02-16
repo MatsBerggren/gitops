@@ -1,15 +1,25 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: wordpress
+
 resources:
   - namespace.yaml
+
+  # Database
   - secret-mariadb.yaml
   - mariadb-service.yaml
   - mariadb-statefulset.yaml
+
+  # Redis (object cache)
   - redis-secret.yaml
   - redis-service.yaml
   - redis-statefulset.yaml
+
+  # WordPress
+  - wp-content-rbd-pvc.yaml
+  - wp-php-ini-configmap.yaml
+  - wp-nginx-configmap.yaml
   - wordpress-service.yaml
   - wordpress-deployment.yaml
-  - wp-content-rbd-pvc.yaml
   - ingress.yaml
+  - cronjob-wp-cron.yaml

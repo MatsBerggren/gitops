@@ -4,14 +4,18 @@ metadata:
   name: wordpress
   namespace: wordpress
   annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-dns"
-    nginx.ingress.kubernetes.io/proxy-body-size: "600m"
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+    nginx.ingress.kubernetes.io/proxy-body-size: "650m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/client-body-timeout: "300"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - www.taberg.info        
-      secretName: wordpress-tls
+        - www.taberg.info
+      secretName: www-taberg-info-tls
   rules:
     - host: www.taberg.info
       http:

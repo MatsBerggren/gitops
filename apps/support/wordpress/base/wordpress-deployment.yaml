@@ -83,6 +83,8 @@ spec:
                 secretKeyRef:
                   name: mariadb-secret
                   key: mariadb-database
+
+            # Redis for object cache (plugin drop-in still required, but keeps config ready)
             - name: REDIS_HOST
               value: "redis"
             - name: REDIS_PORT
@@ -94,16 +96,21 @@ spec:
                   key: redis-password
             - name: WP_CACHE_KEY_SALT
               value: "wp:www.taberg.info:"
+
             - name: WORDPRESS_CONFIG_EXTRA
               value: |
-                if (!defined('WP_REDIS_HOST'))  define('WP_REDIS_HOST', getenv('REDIS_HOST'));
-                if (!defined('WP_REDIS_PORT'))  define('WP_REDIS_PORT', intval(getenv('REDIS_PORT') ?: '6379'));
+                if (!defined('DISABLE_WP_CRON')) define('DISABLE_WP_CRON', true);
+                if (!defined('FS_METHOD')) define('FS_METHOD', 'direct');
+                if (!defined('WP_REDIS_HOST')) define('WP_REDIS_HOST', getenv('REDIS_HOST'));
+                if (!defined('WP_REDIS_PORT')) define('WP_REDIS_PORT', intval(getenv('REDIS_PORT') ?: '6379'));
                 if (!defined('WP_REDIS_PASSWORD')) define('WP_REDIS_PASSWORD', getenv('REDIS_PASSWORD') ?: null);
                 if (!defined('WP_CACHE_KEY_SALT')) define('WP_CACHE_KEY_SALT', getenv('WP_CACHE_KEY_SALT') ?: 'wp:site:');
                 if (!defined('WP_REDIS_DATABASE')) define('WP_REDIS_DATABASE', 0);
-                if (!defined('WP_CACHE')) define('WP_CACHE', true);
-                if (!defined('DISABLE_WP_CRON')) define('DISABLE_WP_CRON', true);
-                if (!defined('FS_METHOD')) define('FS_METHOD', 'direct');
+
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
           volumeMounts:
             - name: wp-core
               mountPath: /var/www/html
@@ -130,6 +137,10 @@ spec:
             periodSeconds: 5
             failureThreshold: 12
             timeoutSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
           volumeMounts:
             - name: wp-core
               mountPath: /var/www/html
@@ -144,13 +155,14 @@ spec:
           emptyDir: {}
         - name: wp-content
           persistentVolumeClaim:
-            claimName: wp-content-rbd
+            claimName: wp-content
         - name: php-ini
           configMap:
             name: wp-php-ini
         - name: nginx-conf
           configMap:
             name: wp-nginx
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -158,8 +170,8 @@ metadata:
   name: wp-content
   namespace: wordpress
 spec:
-  accessModes: ["ReadWriteMany"]
-  storageClassName: cephfs-fuse
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: ceph-rbd
   resources:
     requests:
-      storage: 5Gi
+      storage: 10Gi
