@@ -18,6 +18,22 @@ spec:
       terminationGracePeriodSeconds: 60
 
       initContainers:
+        - name: seed-wp-content
+          image: wordpress:6.9.1-php8.3-fpm
+          command: ["sh","-lc"]
+          args:
+            - |
+              set -e
+              # On a fresh PVC, wp-content is empty. Seed default themes/plugins so WP admin works.
+              if [ ! -d /var/www/html/wp-content/themes ]; then
+                echo "Seeding wp-content from image..."
+                mkdir -p /var/www/html/wp-content
+                cp -a /usr/src/wordpress/wp-content/. /var/www/html/wp-content/
+              fi
+          volumeMounts:
+            - name: wp-content
+              mountPath: /var/www/html/wp-content
+
         - name: fix-perms
           image: alpine:3.20
           command: ["sh","-lc"]
