@@ -154,9 +154,9 @@ spec:
             - name: wp-content
               mountPath: /var/www/html/wp-content
             - name: php-ini
-              mountPath: /usr/local/etc/php/conf.d
-              readOnly: truelocal/etc/php/conf.d/00-custom.ini
+              mountPath: /usr/local/etc/php/conf.d/00-custom.ini
               subPath: 00-custom.ini
+              readOnly: true
 
         - name: nginx
           image: nginx:1.27-alpine
@@ -165,9 +165,6 @@ spec:
               name: http
           securityContext:
             allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            capabilities:
-              drop: ["ALL"]
             runAsNonRoot: true
             capabilities:
               drop: ["ALL"]
