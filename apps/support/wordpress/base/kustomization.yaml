@@ -22,4 +22,3 @@ resources:
   - wordpress-service.yaml
   - wordpress-deployment.yaml
   - ingress.yaml
-  - cronjob-wp-cron.yaml

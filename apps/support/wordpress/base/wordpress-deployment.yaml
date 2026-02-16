@@ -156,6 +156,24 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+
+        - name: wp-cron-runner
+          image: curlimages/curl:8.12.1
+          command: ["sh","-lc"]
+          args:
+            - |
+              # Run wp-cron internally to avoid DNS flakiness from separate CronJob pods
+              while true; do
+                curl -sS -m 60 http://127.0.0.1:8080/wp-cron.php?doing_wp_cron=1 >/dev/null || true
+                sleep 300
+              done
+          resources:
+            requests:
+              cpu: 5m
+              memory: 16Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           startupProbe:
             tcpSocket: { port: 8080 }
             periodSeconds: 5
