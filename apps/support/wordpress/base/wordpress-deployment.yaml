@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress
+  namespace: wordpress
 spec:
   replicas: 1
   strategy:
@@ -15,11 +16,6 @@ spec:
         app: wordpress
     spec:
       terminationGracePeriodSeconds: 60
-      securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-        fsGroup: 33
-        fsGroupChangePolicy: OnRootMismatch
 
       initContainers:
         - name: seed-wp-content
@@ -156,18 +152,19 @@ spec:
             - name: php-ini
               mountPath: /usr/local/etc/php/conf.d/00-custom.ini
               subPath: 00-custom.ini
-              readOnly: true
 
         - name: nginx
           image: nginx:1.27-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 101
+            runAsGroup: 101
           ports:
             - containerPort: 8080
               name: http
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            capabilities:
-              drop: ["ALL"]
           startupProbe:
             tcpSocket: { port: 8080 }
             periodSeconds: 5
@@ -196,6 +193,14 @@ spec:
         - name: wp-cron-runner
           image: curlimages/curl:8.12.1
           command: ["sh","-lc"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
           args:
             - |
               # Run wp-cron internally to avoid DNS flakiness from separate CronJob pods
@@ -207,12 +212,6 @@ spec:
             requests:
               cpu: 5m
               memory: 16Mi
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            capabilities:
-              drop: ["ALL"]
-            readOnlyRootFilesystem: true
 
       volumes:
         - name: wp-core
@@ -226,3 +225,16 @@ spec:
         - name: nginx-conf
           configMap:
             name: wp-nginx
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-content
+  namespace: wordpress
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: ceph-rbd
+  resources:
+    requests:
+      storage: 10Gi
