@@ -234,15 +234,3 @@ spec:
         - name: nginx-run
           emptyDir: {}
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: wp-content
-  namespace: wordpress
-spec:
-  accessModes: ["ReadWriteOnce"]
-  storageClassName: ceph-rbd
-  resources:
-    requests:
-      storage: 10Gi
