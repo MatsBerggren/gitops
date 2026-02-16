@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redis
-  namespace: wordpress
 spec:
   selector:
     matchLabels:
@@ -15,9 +14,17 @@ spec:
         app: redis
     spec:
       terminationGracePeriodSeconds: 30
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: redis
           image: redis:7.2-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 6379

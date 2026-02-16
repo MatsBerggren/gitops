@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress
-  namespace: wordpress
 spec:
   replicas: 1
   strategy:
@@ -16,6 +15,11 @@ spec:
         app: wordpress
     spec:
       terminationGracePeriodSeconds: 60
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        fsGroup: 33
+        fsGroupChangePolicy: OnRootMismatch
 
       initContainers:
         - name: seed-wp-content
@@ -150,7 +154,8 @@ spec:
             - name: wp-content
               mountPath: /var/www/html/wp-content
             - name: php-ini
-              mountPath: /usr/local/etc/php/conf.d/00-custom.ini
+              mountPath: /usr/local/etc/php/conf.d
+              readOnly: truelocal/etc/php/conf.d/00-custom.ini
               subPath: 00-custom.ini
 
         - name: nginx
@@ -158,6 +163,14 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
           startupProbe:
             tcpSocket: { port: 8080 }
             periodSeconds: 5
@@ -199,6 +212,9 @@ spec:
               memory: 16Mi
           securityContext:
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
             readOnlyRootFilesystem: true
 
       volumes:
