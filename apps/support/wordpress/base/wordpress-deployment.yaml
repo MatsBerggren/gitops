@@ -118,6 +118,18 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+          startupProbe:
+            tcpSocket: { port: 8080 }
+            periodSeconds: 5
+            failureThreshold: 120
+            timeoutSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /readme.html
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 12
+            timeoutSeconds: 10
           volumeMounts:
             - name: wp-core
               mountPath: /var/www/html
@@ -126,19 +138,6 @@ spec:
             - name: nginx-conf
               mountPath: /etc/nginx/conf.d/default.conf
               subPath: default.conf
-
-      startupProbe:
-        tcpSocket: { port: 8080 }
-        periodSeconds: 5
-        failureThreshold: 120
-        timeoutSeconds: 2
-      readinessProbe:
-        httpGet:
-          path: /readme.html
-          port: 8080
-        periodSeconds: 5
-        failureThreshold: 12
-        timeoutSeconds: 10
 
       volumes:
         - name: wp-core
