@@ -4,4 +4,4 @@ namespace: wordpress
 
 resources:
   - ../../base
-  - ../../base/namespace.yaml
+  - ./namespace.yaml
