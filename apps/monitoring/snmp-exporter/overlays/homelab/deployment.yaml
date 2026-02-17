@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: snmp-exporter
-          image: quay.io/prometheus/snmp-exporter:v0.26.0
+          image: quay.io/prometheus/snmp-exporter:v0.25.0
           args:
             - --config.file=/etc/snmp_exporter/snmp.yml
           ports:
