@@ -4,8 +4,7 @@
 
 prometheus:
   prometheusSpec:
-    externalUrl: https://monitoring.support4u.se
-    routePrefix: /
+    # NOTE: For Rancher (K8s API proxy) links to work reliably, avoid externalUrl/routePrefix.
 
     retention: 15d
     scrapeInterval: 30s
@@ -20,8 +19,7 @@ prometheus:
 alertmanager:
   enabled: true
   alertmanagerSpec:
-    routePrefix: /alertmanager
-    externalUrl: https://monitoring.support4u.se/alertmanager
+    # NOTE: For Rancher (K8s API proxy) links to work reliably, avoid externalUrl/routePrefix.
 
   # Let the chart manage the Secret (plaintext, per your accepted tradeoff)
   config:
@@ -49,10 +47,8 @@ alertmanager:
 grafana:
   enabled: true
 
-  grafana.ini:
-    server:
-      root_url: https://monitoring.support4u.se/grafana
-      serve_from_sub_path: true
+  # NOTE: For Rancher (K8s API proxy) links to work reliably, don't force root_url/serve_from_sub_path.
+  # (If you want external URLs again later, we can re-enable these.)
 
   # Keep it simple; we already create an Ingress separately.
   service:
