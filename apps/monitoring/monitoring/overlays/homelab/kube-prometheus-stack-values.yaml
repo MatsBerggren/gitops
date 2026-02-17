@@ -36,6 +36,9 @@ alertmanager:
       repeat_interval: 4h
 
     receivers:
+      # Drop Watchdog (and any other routes we point at this receiver)
+      - name: "null"
+
       - name: telegram
         telegram_configs:
           - bot_token: '8565060282:AAE1WALNgES6_s1Lo-tbkDqFD2Q-naNB7vk'
