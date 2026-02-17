@@ -1,0 +1,15 @@
+# NOTE: This is a placeholder.
+# We can either:
+#  - commit the Telegram bot token here (not recommended), or
+#  - switch to SealedSecrets/SOPS/ExternalSecrets, or
+#  - create the secret out-of-band and reference it.
+#
+# If you accept committing plaintext for now, we will generate a real Alertmanager config.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-monitoring-kube-prometheus-alertmanager
+  namespace: monitoring
+type: Opaque
+data:
+  alertmanager.yaml: ""

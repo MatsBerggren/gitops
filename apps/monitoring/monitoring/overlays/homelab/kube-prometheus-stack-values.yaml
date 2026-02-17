@@ -1,0 +1,41 @@
+# Minimal homelab-friendly defaults
+# - Grafana + Prometheus + Alertmanager
+# - Alertmanager config comes from secret: alertmanager-monitoring-kube-prometheus-alertmanager
+#   (we'll populate it once we decide how to handle secrets)
+
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1Gi
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    replicas: 1
+
+# Use existing secret for config (created in overlay)
+# This is the name kube-prometheus-stack expects by default:
+# alertmanager-<release>-kube-prometheus-alertmanager
+# We'll use releaseName: monitoring (see kustomization.yaml)
+
+grafana:
+  enabled: true
+  adminPassword: "changeme"
+  defaultDashboardsEnabled: true
+  persistence:
+    enabled: true
+    storageClassName: ceph-rbd
+    accessModes: ["ReadWriteOnce"]
+    size: 5Gi
+
+kube-state-metrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+prometheus-node-exporter:
+  enabled: true

@@ -8,3 +8,5 @@ resources:
   - applicationsets/system-tools.yaml
   - projects/project-support.yaml
   - applicationsets/support.yaml
+  - projects/project-monitoring.yaml
+  - applicationsets/monitoring.yaml
