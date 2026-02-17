@@ -28,8 +28,6 @@ spec:
           env:
             - name: PVE_VERIFY_SSL
               value: "false"
-          args:
-            # comma-separated list of PVE nodes / API endpoints
-            - --pve=https://10.10.10.11:8006
-            - --pve=https://10.10.10.12:8006
-            - --pve=https://10.10.10.13:8006
+          # IMPORTANT:
+          # This exporter is a proxy. Prometheus scrapes /pve?target=<proxmox-host>
+          # so we do NOT pass --pve=... args here.
