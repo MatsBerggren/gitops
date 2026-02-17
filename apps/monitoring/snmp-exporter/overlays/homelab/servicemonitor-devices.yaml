@@ -2,7 +2,7 @@
 # This pattern uses params: target/module/auth.
 # For a small set of devices it's easiest to keep one ServiceMonitor per device.
 
-apiVersion: monitoring.coreos.com/v1
+apiVersion: monitor.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: snmp-pfsense
@@ -23,7 +23,7 @@ spec:
         target: ["10.10.10.50"]
 
 ---
-apiVersion: monitoring.coreos.com/v1
+apiVersion: monitor.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: snmp-dell-n2048p
@@ -44,7 +44,7 @@ spec:
         target: ["10.10.10.4"]
 
 ---
-apiVersion: monitoring.coreos.com/v1
+apiVersion: monitor.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: snmp-brocade-icx6610
