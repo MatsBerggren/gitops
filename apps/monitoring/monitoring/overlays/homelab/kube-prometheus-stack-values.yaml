@@ -16,9 +16,25 @@ prometheus:
 
 alertmanager:
   enabled: true
-  alertmanagerSpec:
-    # Use the Secret created by apps/monitoring/alerting
-    configSecret: alertmanager-kube-prometheus-stack-alertmanager
+  # Let the chart manage the Secret (plaintext, per your accepted tradeoff)
+  config:
+    global:
+      resolve_timeout: 5m
+
+    route:
+      receiver: telegram
+      group_by: ['alertname','namespace']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+
+    receivers:
+      - name: telegram
+        telegram_configs:
+          - bot_token: '8565060282:AAE1WALNgES6_s1Lo-tbkDqFD2Q-naNB7vk'
+            chat_id: 8043105925
+            send_resolved: true
+            parse_mode: 'HTML'
 
 # Grafana is managed as a separate Argo app in this cluster
 # (keep disabled here to avoid double-install).
