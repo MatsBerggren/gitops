@@ -5,7 +5,6 @@ namespace: monitoring
 
 resources:
   - namespace.yaml
-  - alertmanager-config.yaml
 
 helmCharts:
   - name: kube-prometheus-stack

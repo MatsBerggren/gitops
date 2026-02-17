@@ -1,7 +1,5 @@
-# Minimal homelab-friendly defaults
-# - Grafana + Prometheus + Alertmanager
-# - Alertmanager config comes from secret: alertmanager-monitoring-kube-prometheus-alertmanager
-#   (we'll populate it once we decide how to handle secrets)
+# Homelab-friendly defaults
+# NOTE: contains Telegram bot token in plaintext (GitOps). If you want, we can switch to SealedSecrets/SOPS later.
 
 prometheus:
   prometheusSpec:
@@ -13,17 +11,29 @@ prometheus:
 
 alertmanager:
   enabled: true
-  alertmanagerSpec:
-    replicas: 1
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      receiver: telegram
+      group_by: ['alertname','cluster','namespace']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+    receivers:
+      - name: telegram
+        telegram_configs:
+          - bot_token: "8565060282:AAE1WALNgES6_s1Lo-tbkDqFD2Q-naNB7vk"
+            chat_id: 8043105925
+            send_resolved: true
+            parse_mode: HTML
 
-# Use existing secret for config (created in overlay)
-# This is the name kube-prometheus-stack expects by default:
-# alertmanager-<release>-kube-prometheus-alertmanager
-# We'll use releaseName: monitoring (see kustomization.yaml)
+# Grafana
+# You probably want to change this (we can move to a Secret later)
 
 grafana:
   enabled: true
-  adminPassword: "changeme"
+  adminPassword: "admin"
   defaultDashboardsEnabled: true
   persistence:
     enabled: true
