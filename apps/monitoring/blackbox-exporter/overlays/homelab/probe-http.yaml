@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: Probe
 metadata:
   name: http-endpoints
-  namespace: monitoring
+  namespace: monitor
   labels:
     release: kube-prometheus-stack
 spec:

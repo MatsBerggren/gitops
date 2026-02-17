@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: homelab-custom-alerts
-  namespace: monitoring
+  namespace: monitor
   labels:
     release: kube-prometheus-stack
 spec:

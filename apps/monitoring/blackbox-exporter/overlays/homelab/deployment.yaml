@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: blackbox-exporter
-  namespace: monitoring
+  namespace: monitor
   labels:
     app: blackbox-exporter
 spec:

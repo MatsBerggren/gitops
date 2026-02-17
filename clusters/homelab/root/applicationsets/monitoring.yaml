@@ -23,7 +23,7 @@ spec:
         path: '{{path}}/overlays/homelab'
       destination:
         server: https://kubernetes.default.svc
-        namespace: monitoring
+        namespace: monitor
       ignoreDifferences:
         - group: ""
           kind: Namespace
