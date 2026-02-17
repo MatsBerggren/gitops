@@ -36,10 +36,16 @@ alertmanager:
             send_resolved: true
             parse_mode: 'HTML'
 
-# Grafana is managed as a separate Argo app in this cluster
-# (keep disabled here to avoid double-install).
 grafana:
-  enabled: false
+  enabled: true
+
+  # Keep it simple; we already create an Ingress separately.
+  service:
+    port: 80
+
+  # If you want persistence later, we can enable it and add a PVC.
+  persistence:
+    enabled: false
 
 # Reduce noise for small clusters
 defaultRules:
