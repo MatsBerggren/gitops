@@ -16,14 +16,14 @@ spec:
     metadata:
       name: '{{path.basename}}'
     spec:
-      project: monitoring
+      project: system-tools
       source:
         repoURL: https://github.com/MatsBerggren/gitops
         targetRevision: main
         path: '{{path}}/overlays/homelab'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{path.basename}}'
+        namespace: monitoring
       syncPolicy:
         automated:
           prune: false

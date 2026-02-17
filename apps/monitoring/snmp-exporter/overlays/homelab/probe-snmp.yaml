@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: network-snmp
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  prober:
+    url: snmp-exporter.monitoring.svc.cluster.local:9116
+  module: if_mib
+  targets:
+    staticConfig:
+      static:
+        # TODO: fill in your device IPs here
+        - 10.10.10.50   # pfSense
+        - 10.10.10.4    # Dell N2048P
+        - 10.10.10.20   # Brocade ICX6610

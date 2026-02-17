@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pve-exporter
+  namespace: monitoring
+  labels:
+    app: pve-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pve-exporter
+  template:
+    metadata:
+      labels:
+        app: pve-exporter
+    spec:
+      containers:
+        - name: pve-exporter
+          # proxmox exporter: https://github.com/prometheus-pve/prometheus-pve-exporter
+          image: prompve/prometheus-pve-exporter:3.4.1
+          ports:
+            - name: http
+              containerPort: 9221
+          envFrom:
+            - secretRef:
+                name: pve-exporter
+          env:
+            - name: PVE_VERIFY_SSL
+              value: "false"
+          args:
+            # comma-separated list of PVE nodes / API endpoints
+            - --pve=https://10.10.10.11:8006
+            - --pve=https://10.10.10.12:8006
+            - --pve=https://10.10.10.13:8006
