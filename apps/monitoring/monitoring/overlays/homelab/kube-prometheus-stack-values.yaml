@@ -1,0 +1,37 @@
+# Minimal, homelab-friendly kube-prometheus-stack values.
+# Alertmanager config is supplied by Secret:
+#   alertmanager-kube-prometheus-stack-alertmanager (managed by apps/monitoring/alerting)
+
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    scrapeInterval: 30s
+    evaluationInterval: 30s
+
+    # Allow ServiceMonitors/PodMonitors/Probes created outside this Helm release
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    # Use the Secret created by apps/monitoring/alerting
+    configSecret: alertmanager-kube-prometheus-stack-alertmanager
+
+# Grafana is managed as a separate Argo app in this cluster
+# (keep disabled here to avoid double-install).
+grafana:
+  enabled: false
+
+# Reduce noise for small clusters
+defaultRules:
+  create: true
+
+kubeControllerManager:
+  enabled: true
+kubeScheduler:
+  enabled: true
+kubeEtcd:
+  enabled: true
