@@ -20,6 +20,8 @@ alertmanager:
   enabled: true
   alertmanagerSpec:
     # NOTE: For Rancher (K8s API proxy) links to work reliably, avoid externalUrl/routePrefix.
+    # The chart expects portName to be set.
+    portName: http-web
 
   # Let the chart manage the Secret (plaintext, per your accepted tradeoff)
   config:
