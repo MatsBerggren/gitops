@@ -1,0 +1,65 @@
+# Scrape SNMP targets through snmp-exporter.
+# This pattern uses params: target/module/auth.
+# For a small set of devices it's easiest to keep one ServiceMonitor per device.
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: snmp-pfsense
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: snmp-exporter
+  endpoints:
+    - port: http
+      interval: 60s
+      path: /snmp
+      params:
+        module: ["if_mib"]
+        auth: ["public_v2"]
+        target: ["10.10.10.50"]
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: snmp-dell-n2048p
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: snmp-exporter
+  endpoints:
+    - port: http
+      interval: 60s
+      path: /snmp
+      params:
+        module: ["if_mib"]
+        auth: ["public_v2"]
+        target: ["10.10.10.4"]
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: snmp-brocade-icx6610
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: snmp-exporter
+  endpoints:
+    - port: http
+      interval: 60s
+      path: /snmp
+      params:
+        module: ["if_mib"]
+        auth: ["public_v2"]
+        target: ["10.10.10.20"]
