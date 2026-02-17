@@ -24,6 +24,11 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: monitoring
+      ignoreDifferences:
+        - group: ""
+          kind: Namespace
+          jqPathExpressions:
+            - .metadata
       syncPolicy:
         automated:
           prune: false
