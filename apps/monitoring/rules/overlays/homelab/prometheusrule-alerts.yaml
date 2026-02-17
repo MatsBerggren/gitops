@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: homelab-custom-alerts
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: homelab.exporters
+      rules:
+        - alert: ExporterDown
+          expr: up{job=~"(snmp-exporter|pve-exporter|blackbox-exporter)"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Exporter down: {{ $labels.job }}"
+            description: "Prometheus cannot scrape exporter {{ $labels.job }} (instance={{ $labels.instance }})."
+
+        - alert: SNMPDeviceDown
+          # up==0 for snmp-exporter scrape endpoints (the /snmp?target=... scrapes)
+          expr: up{job="snmp-exporter",instance=~".*/snmp\\?.*"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "SNMP target down"
+            description: "SNMP scrape failed (instance={{ $labels.instance }}). Likely device unreachable, SNMP blocked, or community mismatch."
+
+        - alert: ProxmoxScrapeFailing
+          expr: up{job="pve-exporter"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Proxmox exporter down"
+            description: "pve-exporter is not scrapeable (instance={{ $labels.instance }})."
