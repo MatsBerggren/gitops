@@ -6,8 +6,7 @@ spec:
   replicas: 1
   template:
     spec:
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      # PodSecurity baseline forbids hostNetwork.
       containers:
         - name: toolbox
           resources:
