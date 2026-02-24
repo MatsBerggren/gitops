@@ -50,4 +50,4 @@ spec:
             claimName: homeassistant-config-ceph
         - name: homeassistant-media
           persistentVolumeClaim:
-            claimName: homeassistant-claim1
+            claimName: homeassistant-media-ceph

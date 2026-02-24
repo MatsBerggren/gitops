@@ -47,4 +47,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: minio-data
+            claimName: minio-data-ceph
