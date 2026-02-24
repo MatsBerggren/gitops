@@ -20,6 +20,9 @@ spec:
           service:
             type: ClusterIP
 
+        prometheus-node-exporter:
+          enabled: false
+
         prometheus:
           prometheusSpec:
             retention: 15d
