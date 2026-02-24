@@ -13,4 +13,4 @@ secretGenerator:
   - name: grafana-admin
     literals:
       - username=admin
-      - password=CHANGE_ME
+      - password=YY8I36ETJKxvaYH15ARigUaLrmz5Pjzm

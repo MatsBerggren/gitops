@@ -16,7 +16,7 @@ spec:
 
         grafana:
           enabled: true
-          adminPassword: "CHANGE_ME"
+          adminPassword: "YY8I36ETJKxvaYH15ARigUaLrmz5Pjzm"
           service:
             type: ClusterIP
 
