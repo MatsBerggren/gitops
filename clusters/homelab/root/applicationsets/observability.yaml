@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: observability
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: root-homelab
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/MatsBerggren/gitops
+        revision: main
+        directories:
+          - path: apps/observability/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: observability
+      source:
+        repoURL: https://github.com/MatsBerggren/gitops
+        targetRevision: main
+        path: '{{path}}/overlays/homelab'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: argocd
+      syncPolicy:
+        syncOptions:
+          - ServerSideApply=true
+          - RespectIgnoreDifferences=true
