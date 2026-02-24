@@ -19,8 +19,6 @@ spec:
         - name: zigbee2mqtt
           image: ghcr.io/koenkk/zigbee2mqtt:latest
           imagePullPolicy: Always
-          securityContext:
-            privileged: true
           env:
             #- name: TZ
             #  value: Europe/Stockholm
