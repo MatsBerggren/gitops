@@ -8,7 +8,7 @@ data:
     permit_join: false
     mqtt:
       base_topic: zigbee2mqtt
-      server: mqtt://mosquitto.home-automation.svc.cluster.local:1883
+      server: mqtt://mosquitto.mosquitto.svc.cluster.local:1883
       user: "ha"
       password: "CHANGEME"
     serial:
