@@ -1,7 +1,0 @@
-# namespace.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: tactical-rmm
-  labels:
-    app: tactical-rmm
