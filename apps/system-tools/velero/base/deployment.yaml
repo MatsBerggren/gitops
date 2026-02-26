@@ -17,15 +17,21 @@ spec:
     spec:
       serviceAccountName: velero
       initContainers:
+        # Copy AWS plugin into the shared /plugins dir.
+        # This avoids running `velero plugin add` (which may require network access from the pod).
         - name: velero-plugin-for-aws
-          image: velero/velero:v1.13.2
+          image: velero/velero-plugin-for-aws:v1.13.2
           imagePullPolicy: IfNotPresent
           command:
-            - /velero
+            - /bin/sh
           args:
-            - plugin
-            - add
-            - velero/velero-plugin-for-aws:v1.13.2
+            - -c
+            - |
+              set -e
+              echo "Copying Velero AWS plugin into /plugins";
+              # Most plugin images include the binary at /velero-plugin-for-aws
+              cp -v /velero-plugin-for-aws /plugins/velero-plugin-for-aws
+              chmod +x /plugins/velero-plugin-for-aws
           volumeMounts:
             - name: plugins
               mountPath: /plugins
