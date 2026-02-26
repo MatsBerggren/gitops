@@ -42,6 +42,8 @@ spec:
           env:
             - name: BAO_ADDR
               value: http://127.0.0.1:8200
+            - name: HOME
+              value: /tmp
           # NOTE: /v1/sys/health returns 501 when not initialized and 503 when sealed.
           # During bootstrap we disable liveness (to avoid restart loops) and keep a lenient readiness.
           readinessProbe:
