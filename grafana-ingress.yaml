@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: <your-namespace>  # Ändra detta mot ditt namespace
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - host: grafana.support4u.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            path: 
+                service:
+                  name: grafana-service  # Ändra mot namnet på din Grafana tjänst
+                  port:
+                    number: 3000  # Standardport för Grafana
