@@ -16,19 +16,33 @@ spec:
         app.kubernetes.io/name: velero
     spec:
       serviceAccountName: velero
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
       initContainers:
-        # Install Velero AWS plugin.
-        # The plugin image is minimal (no /bin/sh), so we use the Velero binary to add it.
+        # Install Velero AWS plugin (ObjectStore for S3/MinIO)
         - name: velero-plugin-for-aws
-          image: velero/velero-plugin-for-aws:v1.13.2
+          image: velero/velero:v1.13.2
           imagePullPolicy: IfNotPresent
           command:
-            - /velero-plugin-for-aws
+            - /velero
           args:
-            - version
+            - plugin
+            - add
+            - velero/velero-plugin-for-aws:v1.13.2
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           volumeMounts:
             - name: plugins
               mountPath: /plugins
+
       containers:
         - name: velero
           image: velero/velero:v1.13.2
@@ -37,6 +51,10 @@ spec:
             - /velero
           args:
             - server
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           env:
             - name: VELERO_SCRATCH_DIR
               value: /scratch
