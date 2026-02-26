@@ -20,6 +20,8 @@ spec:
         - name: velero
           image: velero/velero:v1.13.2
           imagePullPolicy: IfNotPresent
+          command:
+            - /velero
           args:
             - server
           env:
