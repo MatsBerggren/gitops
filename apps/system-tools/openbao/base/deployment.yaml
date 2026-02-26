@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openbao
+  namespace: openbao
+  labels:
+    app.kubernetes.io/name: openbao
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: openbao
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: openbao
+    spec:
+      containers:
+        - name: openbao
+          image: ghcr.io/openbao/openbao:2.1.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - server
+            - -config=/bao/config/config.hcl
+          ports:
+            - name: http
+              containerPort: 8200
+          env:
+            - name: BAO_ADDR
+              value: http://127.0.0.1:8200
+          readinessProbe:
+            httpGet:
+              path: /v1/sys/health
+              port: 8200
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /v1/sys/health
+              port: 8200
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            failureThreshold: 6
+          volumeMounts:
+            - name: config
+              mountPath: /bao/config
+            - name: data
+              mountPath: /bao/data
+      volumes:
+        - name: config
+          configMap:
+            name: openbao-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: openbao-data

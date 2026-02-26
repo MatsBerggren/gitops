@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: velero
+
+resources:
+  - namespace.yaml
+  - serviceaccount.yaml
+  - rbac.yaml
+  - credentials-secret.yaml # base fallback; overridden by ExternalSecret in overlays if you enable OpenBao
+  - backupstoragelocation.yaml
+  - deployment.yaml
+
+# Install Velero CRDs first (ArgoCD should apply, but ordering can matter; if you hit issues,
+# split CRDs into their own Argo app.)
+  - crds.yaml
