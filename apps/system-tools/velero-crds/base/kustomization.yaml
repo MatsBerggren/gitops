@@ -13,3 +13,7 @@ resources:
   - crds/velero.io_schedules.yaml
   - crds/velero.io_serverstatusrequests.yaml
   - crds/velero.io_volumesnapshotlocations.yaml
+
+  # v2alpha1 (data mover)
+  - crds/velero.io_datadownloads.yaml
+  - crds/velero.io_datauploads.yaml
