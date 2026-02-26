@@ -15,6 +15,20 @@ spec:
       labels:
         app.kubernetes.io/name: openbao
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.36
+          command: ["sh", "-c", "mkdir -p /bao/data/core && chown -R 1000:1000 /bao/data"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: data
+              mountPath: /bao/data
       containers:
         - name: openbao
           image: ghcr.io/openbao/openbao:2.1.0
