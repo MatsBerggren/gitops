@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: argocd-cm
 data:
+  # Allow Kustomize to render helmCharts/HelmChartInflationGenerator (required for many charts)
+  kustomize.buildOptions: "--enable-helm"
   # Ignore status fields that can be persisted under StatefulSet volumeClaimTemplates
   # (seen on k3s) and otherwise cause perpetual OutOfSync.
   resource.customizations.ignoreDifferences.apps_StatefulSet: |

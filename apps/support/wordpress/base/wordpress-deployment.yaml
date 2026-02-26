@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress
-  namespace: wordpress
 spec:
   replicas: 1
   strategy:
@@ -16,223 +15,246 @@ spec:
         app: wordpress
     spec:
       terminationGracePeriodSeconds: 60
-
       initContainers:
-        - name: seed-wp-content
-          image: wordpress:6.9.1-php8.3-fpm
-          command: ["sh","-lc"]
-          args:
-            - |
-              set -e
-              # On a fresh PVC, wp-content is empty. Seed default themes/plugins so WP admin works.
-              if [ ! -d /var/www/html/wp-content/themes ]; then
-                echo "Seeding wp-content from image..."
-                mkdir -p /var/www/html/wp-content
-                cp -a /usr/src/wordpress/wp-content/. /var/www/html/wp-content/
-              fi
-          volumeMounts:
-            - name: wp-content
-              mountPath: /var/www/html/wp-content
-
-        - name: fix-perms
-          image: alpine:3.20
-          command: ["sh","-lc"]
-          args:
-            - |
-              set -e
-              # Ensure WordPress can install plugins/themes and run updates
-              chown -R 33:33 /var/www/html/wp-content
-              # Nginx container runs as uid/gid 101 in nginx:alpine by default.
-              # Make wp-content world-readable so nginx can serve static files (uploads, themes, plugin assets).
-              chmod -R u+rwX,g+rwX,o+rX /var/www/html/wp-content
-              mkdir -p /var/www/html/wp-content/{plugins,upgrade,uploads}
-              chown -R 33:33 /var/www/html/wp-content
-          volumeMounts:
-            - name: wp-content
-              mountPath: /var/www/html/wp-content
-
-        - name: wait-for-db
-          image: mariadb:11.4
-          env:
-            - name: WORDPRESS_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: mariadb-secret
-                  key: mariadb-user
-            - name: WORDPRESS_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mariadb-secret
-                  key: mariadb-password
-            - name: WORDPRESS_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: mariadb-secret
-                  key: mariadb-database
-          command:
-            - sh
-            - -c
-            - |
-              set -e
-              DB="mariadb.wordpress.svc.cluster.local"
-              echo "Waiting for DB DNS..."
-              until getent hosts "$DB" >/dev/null 2>&1; do sleep 2; done
-              echo "Waiting for DB (app-user SELECT 1)..."
-              until mariadb -h "$DB" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" -N -e "SELECT 1" >/dev/null 2>&1; do sleep 2; done
-              echo "DB ready."
-
-        - name: init-wp
-          image: wordpress:6.9.1-php8.3-fpm
-          command: ["sh","-lc"]
-          args:
-            - |
-              set -e
-              cp -a /usr/src/wordpress/. /workdir/
-          volumeMounts:
-            - name: wp-core
-              mountPath: /workdir
-
-      containers:
-        - name: php-fpm
-          image: wordpress:6.9.1-php8.3-fpm
-          ports:
-            - containerPort: 9000
-              name: fpm
-          env:
-            - name: WORDPRESS_DB_HOST
-              value: "mariadb.wordpress.svc.cluster.local:3306"
-            - name: WORDPRESS_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: mariadb-secret
-                  key: mariadb-user
-            - name: WORDPRESS_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mariadb-secret
-                  key: mariadb-password
-            - name: WORDPRESS_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: mariadb-secret
-                  key: mariadb-database
-
-            # Redis for object cache (plugin drop-in still required, but keeps config ready)
-            - name: REDIS_HOST
-              value: "redis"
-            - name: REDIS_PORT
-              value: "6379"
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: redis-auth
-                  key: redis-password
-            - name: WP_CACHE_KEY_SALT
-              value: "wp:www.taberg.info:"
-
-            - name: WORDPRESS_CONFIG_EXTRA
-              value: |
-                if (!defined('DISABLE_WP_CRON')) define('DISABLE_WP_CRON', true);
-                if (!defined('FS_METHOD')) define('FS_METHOD', 'direct');
-                // All-in-One WP Migration file size limit (2 GiB)
-                if (!defined('AI1WM_MAX_FILE_SIZE')) define('AI1WM_MAX_FILE_SIZE', 2 * 1024 * 1024 * 1024);
-                if (!defined('WP_REDIS_HOST')) define('WP_REDIS_HOST', getenv('REDIS_HOST'));
-                if (!defined('WP_REDIS_PORT')) define('WP_REDIS_PORT', intval(getenv('REDIS_PORT') ?: '6379'));
-                if (!defined('WP_REDIS_PASSWORD')) define('WP_REDIS_PASSWORD', getenv('REDIS_PASSWORD') ?: null);
-                if (!defined('WP_CACHE_KEY_SALT')) define('WP_CACHE_KEY_SALT', getenv('WP_CACHE_KEY_SALT') ?: 'wp:site:');
-                if (!defined('WP_REDIS_DATABASE')) define('WP_REDIS_DATABASE', 0);
-
-          resources:
-            requests:
-              cpu: 200m
-              memory: 512Mi
-          volumeMounts:
-            - name: wp-core
-              mountPath: /var/www/html
-            - name: wp-content
-              mountPath: /var/www/html/wp-content
-            - name: php-ini
-              mountPath: /usr/local/etc/php/conf.d/00-custom.ini
-              subPath: 00-custom.ini
-
-        - name: nginx
-          image: nginx:1.27-alpine
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            runAsNonRoot: true
-            runAsUser: 101
-            runAsGroup: 101
-          ports:
-            - containerPort: 8080
-              name: http
-          startupProbe:
-            tcpSocket: { port: 8080 }
-            periodSeconds: 5
-            failureThreshold: 120
-            timeoutSeconds: 2
-          readinessProbe:
-            httpGet:
-              path: /readme.html
-              port: 8080
-            periodSeconds: 5
-            failureThreshold: 12
-            timeoutSeconds: 10
-          resources:
-            requests:
-              cpu: 50m
-              memory: 64Mi
-          volumeMounts:
-            - name: wp-core
-              mountPath: /var/www/html
-            - name: wp-content
-              mountPath: /var/www/html/wp-content
-            - name: nginx-conf
-              mountPath: /etc/nginx/conf.d/default.conf
-              subPath: default.conf
-            - name: nginx-cache
-              mountPath: /var/cache/nginx
-            - name: nginx-run
-              mountPath: /var/run
-
-        - name: wp-cron-runner
-          image: curlimages/curl:8.12.1
-          command: ["sh","-lc"]
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-          args:
-            - |
-              # Run wp-cron internally to avoid DNS flakiness from separate CronJob pods
-              while true; do
-                curl -sS -m 60 http://127.0.0.1:8080/wp-cron.php?doing_wp_cron=1 >/dev/null || true
-                sleep 300
-              done
-          resources:
-            requests:
-              cpu: 5m
-              memory: 16Mi
-
-      volumes:
-        - name: wp-core
-          emptyDir: {}
+      - name: seed-wp-content
+        image: wordpress:6.9.1-php8.3-fpm
+        command:
+        - sh
+        - -lc
+        args:
+        - "set -e\n# On a fresh PVC, wp-content is empty. Seed default themes/plugins\
+          \ so WP admin works.\nif [ ! -d /var/www/html/wp-content/themes ]; then\n\
+          \  echo \"Seeding wp-content from image...\"\n  mkdir -p /var/www/html/wp-content\n\
+          \  cp -a /usr/src/wordpress/wp-content/. /var/www/html/wp-content/\nfi\n"
+        volumeMounts:
         - name: wp-content
-          persistentVolumeClaim:
-            claimName: wp-content
-        - name: php-ini
-          configMap:
-            name: wp-php-ini
-        - name: nginx-conf
-          configMap:
-            name: wp-nginx
-        - name: nginx-cache
-          emptyDir: {}
-        - name: nginx-run
-          emptyDir: {}
+          mountPath: /var/www/html/wp-content
+      - name: fix-perms
+        image: alpine:3.20
+        command:
+        - sh
+        - -lc
+        args:
+        - 'set -e
 
+          # Ensure WordPress can install plugins/themes and run updates
+
+          chown -R 33:33 /var/www/html/wp-content
+
+          # Nginx container runs as uid/gid 101 in nginx:alpine by default.
+
+          # Make wp-content world-readable so nginx can serve static files (uploads,
+          themes, plugin assets).
+
+          chmod -R u+rwX,g+rwX,o+rX /var/www/html/wp-content
+
+          mkdir -p /var/www/html/wp-content/{plugins,upgrade,uploads}
+
+          chown -R 33:33 /var/www/html/wp-content
+
+          '
+        volumeMounts:
+        - name: wp-content
+          mountPath: /var/www/html/wp-content
+      - name: wait-for-db
+        image: mariadb:11.4
+        env:
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-user
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-password
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-database
+        command:
+        - sh
+        - -c
+        - 'set -e
+
+          DB="mariadb.wordpress.svc.cluster.local"
+
+          echo "Waiting for DB DNS..."
+
+          until getent hosts "$DB" >/dev/null 2>&1; do sleep 2; done
+
+          echo "Waiting for DB (app-user SELECT 1)..."
+
+          until mariadb -h "$DB" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD"
+          -N -e "SELECT 1" >/dev/null 2>&1; do sleep 2; done
+
+          echo "DB ready."
+
+          '
+      - name: init-wp
+        image: wordpress:6.9.1-php8.3-fpm
+        command:
+        - sh
+        - -lc
+        args:
+        - 'set -e
+
+          cp -a /usr/src/wordpress/. /workdir/
+
+          '
+        volumeMounts:
+        - name: wp-core
+          mountPath: /workdir
+      containers:
+      - name: php-fpm
+        image: wordpress:6.9.1-php8.3-fpm
+        ports:
+        - containerPort: 9000
+          name: fpm
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mariadb.wordpress.svc.cluster.local:3306
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-user
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-password
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secret
+              key: mariadb-database
+        - name: REDIS_HOST
+          value: redis
+        - name: REDIS_PORT
+          value: '6379'
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-auth
+              key: redis-password
+        - name: WP_CACHE_KEY_SALT
+          value: 'wp:www.taberg.info:'
+        - name: WORDPRESS_CONFIG_EXTRA
+          value: 'if (!defined(''DISABLE_WP_CRON'')) define(''DISABLE_WP_CRON'', true);
+
+            if (!defined(''FS_METHOD'')) define(''FS_METHOD'', ''direct'');
+
+            // All-in-One WP Migration file size limit (2 GiB)
+
+            if (!defined(''AI1WM_MAX_FILE_SIZE'')) define(''AI1WM_MAX_FILE_SIZE'',
+            2 * 1024 * 1024 * 1024);
+
+            if (!defined(''WP_REDIS_HOST'')) define(''WP_REDIS_HOST'', getenv(''REDIS_HOST''));
+
+            if (!defined(''WP_REDIS_PORT'')) define(''WP_REDIS_PORT'', intval(getenv(''REDIS_PORT'')
+            ?: ''6379''));
+
+            if (!defined(''WP_REDIS_PASSWORD'')) define(''WP_REDIS_PASSWORD'', getenv(''REDIS_PASSWORD'')
+            ?: null);
+
+            if (!defined(''WP_CACHE_KEY_SALT'')) define(''WP_CACHE_KEY_SALT'', getenv(''WP_CACHE_KEY_SALT'')
+            ?: ''wp:site:'');
+
+            if (!defined(''WP_REDIS_DATABASE'')) define(''WP_REDIS_DATABASE'', 0);
+
+            '
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+        volumeMounts:
+        - name: wp-core
+          mountPath: /var/www/html
+        - name: wp-content
+          mountPath: /var/www/html/wp-content
+        - name: php-ini
+          mountPath: /usr/local/etc/php/conf.d/00-custom.ini
+          subPath: 00-custom.ini
+      - name: nginx
+        image: nginx:1.27-alpine
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 101
+          runAsGroup: 101
+        ports:
+        - containerPort: 8080
+          name: http
+        startupProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 5
+          failureThreshold: 120
+          timeoutSeconds: 2
+        readinessProbe:
+          httpGet:
+            path: /readme.html
+            port: 8080
+          periodSeconds: 5
+          failureThreshold: 12
+          timeoutSeconds: 10
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        volumeMounts:
+        - name: wp-core
+          mountPath: /var/www/html
+        - name: wp-content
+          mountPath: /var/www/html/wp-content
+        - name: nginx-conf
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+        - name: nginx-run
+          mountPath: /var/run
+      - name: wp-cron-runner
+        image: curlimages/curl:8.12.1
+        command:
+        - sh
+        - -lc
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+        args:
+        - "# Run wp-cron internally to avoid DNS flakiness from separate CronJob pods\n\
+          while true; do\n  curl -sS -m 60 http://127.0.0.1:8080/wp-cron.php?doing_wp_cron=1\
+          \ >/dev/null || true\n  sleep 300\ndone\n"
+        resources:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+      volumes:
+      - name: wp-core
+        emptyDir: {}
+      - name: wp-content
+        persistentVolumeClaim:
+          claimName: wp-content
+      - name: php-ini
+        configMap:
+          name: wp-php-ini
+      - name: nginx-conf
+        configMap:
+          name: wp-nginx
+      - name: nginx-cache
+        emptyDir: {}
+      - name: nginx-run
+        emptyDir: {}
