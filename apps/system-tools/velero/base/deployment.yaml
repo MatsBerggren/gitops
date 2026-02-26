@@ -16,6 +16,19 @@ spec:
         app.kubernetes.io/name: velero
     spec:
       serviceAccountName: velero
+      initContainers:
+        - name: velero-plugin-for-aws
+          image: velero/velero:v1.13.2
+          imagePullPolicy: IfNotPresent
+          command:
+            - /velero
+          args:
+            - plugin
+            - add
+            - velero/velero-plugin-for-aws:v1.13.2
+          volumeMounts:
+            - name: plugins
+              mountPath: /plugins
       containers:
         - name: velero
           image: velero/velero:v1.13.2
@@ -34,9 +47,13 @@ spec:
               mountPath: /credentials
             - name: scratch
               mountPath: /scratch
+            - name: plugins
+              mountPath: /plugins
       volumes:
         - name: cloud-credentials
           secret:
             secretName: cloud-credentials
         - name: scratch
+          emptyDir: {}
+        - name: plugins
           emptyDir: {}
