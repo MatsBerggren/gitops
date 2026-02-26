@@ -28,20 +28,14 @@ spec:
           env:
             - name: BAO_ADDR
               value: http://127.0.0.1:8200
+          # NOTE: /v1/sys/health returns 501 when not initialized and 503 when sealed.
+          # During bootstrap we disable liveness (to avoid restart loops) and keep a lenient readiness.
           readinessProbe:
-            httpGet:
-              path: /v1/sys/health
+            tcpSocket:
               port: 8200
             initialDelaySeconds: 5
             periodSeconds: 10
-            failureThreshold: 12
-          livenessProbe:
-            httpGet:
-              path: /v1/sys/health
-              port: 8200
-            initialDelaySeconds: 30
-            periodSeconds: 20
-            failureThreshold: 6
+            failureThreshold: 30
           volumeMounts:
             - name: config
               mountPath: /bao/config
