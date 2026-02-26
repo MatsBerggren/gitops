@@ -6,6 +6,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-dns"
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - openbao.support4u.se
