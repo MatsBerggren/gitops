@@ -31,7 +31,7 @@ spec:
               mountPath: /bao/data
       containers:
         - name: openbao
-          image: ghcr.io/openbao/openbao:2.1.0
+          image: ghcr.io/openbao/openbao:2.5.1
           imagePullPolicy: IfNotPresent
           args:
             - server
