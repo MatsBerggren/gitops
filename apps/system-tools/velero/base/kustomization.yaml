@@ -11,6 +11,4 @@ resources:
   - backupstoragelocation.yaml
   - deployment.yaml
 
-# Install Velero CRDs first (ArgoCD should apply, but ordering can matter; if you hit issues,
-# split CRDs into their own Argo app.)
-  - crds.yaml
+# Velero CRDs are managed by the separate app: apps/system-tools/velero-crds

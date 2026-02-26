@@ -1,4 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
 resources:
+  # Velero CRDs
   - https://github.com/vmware-tanzu/velero/releases/download/v1.13.2/crds.tar.gz
