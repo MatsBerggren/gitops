@@ -120,6 +120,9 @@ spec:
         - name: scratch
           emptyDir: {}
       securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
         runAsNonRoot: true
+        runAsUser: 1000
         seccompProfile:
           type: RuntimeDefault
