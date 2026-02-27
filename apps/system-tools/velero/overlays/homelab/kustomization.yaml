@@ -5,5 +5,4 @@ resources:
   - namespace.yaml
   - externalsecret-credentials.yaml
   - velero-ui-rbac.yaml
-  - velero-ui-ingress.yaml
   - resources

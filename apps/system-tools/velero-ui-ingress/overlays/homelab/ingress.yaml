@@ -4,9 +4,9 @@ metadata:
   name: velero-ui
   namespace: kube-system
   annotations:
-    kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: letsencrypt-dns
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - velero.support4u.se
