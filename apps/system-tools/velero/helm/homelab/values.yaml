@@ -4,6 +4,8 @@
 # - Volume backups: node-agent (restic)
 
 configuration:
+  # Use legacy restic uploader to avoid kopia cache path issues on Talos/PSS
+  uploaderType: restic
   backupStorageLocation:
     - name: default
       provider: aws
