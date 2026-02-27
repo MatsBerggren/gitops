@@ -20,4 +20,4 @@ spec:
   config:
     region: "minio"
     s3ForcePathStyle: "true"
-    s3Url: "http://minio.minio.svc:9000"
+    s3Url: "https://minio.support4u.se"
