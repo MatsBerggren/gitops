@@ -1,0 +1,143 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: velero-ui
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: velero-ui-passphrase
+  namespace: velero
+type: Opaque
+data:
+  # "this is not a secret passphrase" (from current helm install)
+  pass_phrase: "dGhpcyBpcyBub3QgYSBzZWNyZXQgcGFzc3BocmFzZQ=="
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: velero-ui
+  namespace: velero
+data:
+  policies.csv: |
+    # Please refer to https://velero-ui.docs.otwld.com/ to configure policies
+    # g,*,manage,all
+    # u,*,manage,all
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: velero-ui
+rules:
+  - verbs: ["get"]
+    nonResourceURLs: ["/readyz","/healthz","/livez","/version"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get","list"]
+  - apiGroups: ["velero.io"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: velero-ui
+subjects:
+  - kind: ServiceAccount
+    name: velero-ui
+    namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: velero-ui-permissions
+  namespace: velero
+rules:
+  - apiGroups: [""]
+    resources: ["pods","pods/log","pods/status"]
+    verbs: ["get","list","watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: velero-ui-permissions
+  namespace: velero
+subjects:
+  - kind: ServiceAccount
+    name: velero-ui
+    namespace: kube-system
+roleRef:
+  kind: Role
+  name: velero-ui-permissions
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: velero-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: velero-ui
+      app.kubernetes.io/instance: velero-ui
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: velero-ui
+        app.kubernetes.io/instance: velero-ui
+    spec:
+      serviceAccountName: velero-ui
+      containers:
+        - name: velero-ui
+          image: otwld/velero-ui:0.10.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POLICY_FILE_PATH
+              value: /policies/policies.csv
+            - name: LOG_LEVEL
+              value: info
+            - name: VELERO_NAMESPACE
+              value: velero
+            - name: VELERO_UI_NAMESPACE
+              value: velero
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          volumeMounts:
+            - name: policies
+              mountPath: /policies
+      volumes:
+        - name: policies
+          configMap:
+            name: velero-ui
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velero-ui
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: velero-ui
+    app.kubernetes.io/instance: velero-ui
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
