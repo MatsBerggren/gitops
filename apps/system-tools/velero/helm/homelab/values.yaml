@@ -60,3 +60,8 @@ nodeAgent:
     capabilities:
       drop:
         - ALL
+
+# CRDs are managed by separate app (apps/system-tools/velero-crds)
+upgradeCRDs: false
+upgradeCRDsJob:
+  enabled: false
