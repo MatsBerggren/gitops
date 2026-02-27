@@ -1,0 +1,62 @@
+# Velero (homelab / Talos)
+# - Object storage: MinIO (S3-compatible)
+# - Credentials: provided by ExternalSecrets/OpenBAO in Secret "cloud-credentials"
+# - Volume backups: node-agent (restic)
+
+configuration:
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: velero
+      prefix: homelab
+      default: true
+      config:
+        region: minio
+        s3ForcePathStyle: "true"
+        s3Url: http://minio.minio.svc:9000
+
+  # Start without CSI snapshots; node-agent (restic) covers PVC data.
+  volumeSnapshotLocation: []
+
+credentials:
+  existingSecret: cloud-credentials
+
+# AWS plugin init container (S3/MinIO)
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.11.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+# "Backup everything" incl PVCs: enable node-agent
+deployNodeAgent: true
+
+nodeAgent:
+  podVolumePath: /var/lib/kubelet/pods
+
+# Talos/PSS: make security contexts explicit
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+# node-agent needs hostPath; keep it root but locked down
+nodeAgent:
+  podVolumePath: /var/lib/kubelet/pods
+  podSecurityContext:
+    runAsUser: 0
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
