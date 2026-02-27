@@ -1,0 +1,13 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: homeassistant-daily-0200
+  namespace: velero
+spec:
+  schedule: "0 2 * * *"
+  template:
+    ttl: 720h0m0s
+    includedNamespaces:
+      - homeassistant
+    storageLocation: default
+    defaultVolumesToFsBackup: true
