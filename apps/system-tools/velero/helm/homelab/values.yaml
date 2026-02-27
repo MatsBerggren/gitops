@@ -18,6 +18,16 @@ configuration:
   # Start without CSI snapshots; node-agent (restic) covers PVC data.
   volumeSnapshotLocation: []
 
+  # Ensure repo-maintenance jobs use correct repo names (otherwise jobs may run with --repo-name=<namespace>)
+  repositoryMaintenanceJob:
+    repositoryConfigData:
+      name: velero-repo-maintenance
+      global:
+        keepLatestMaintenanceJobs: 3
+      repositories:
+        esphome-default-kopia:
+          keepLatestMaintenanceJobs: 1
+
 credentials:
   existingSecret: cloud-credentials
 

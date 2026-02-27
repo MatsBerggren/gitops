@@ -15,3 +15,7 @@ data:
     {
       "keepLatestMaintenanceJobs": 3
     }
+  esphome-default-kopia: |
+    {
+      "keepLatestMaintenanceJobs": 1
+    }
