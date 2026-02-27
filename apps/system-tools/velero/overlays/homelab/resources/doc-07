@@ -87,6 +87,8 @@ spec:
               mountPath: /scratch
             - mountPath: /scratch
               name: scratch
+            - mountPath: /udmrepo
+              name: udmrepo
           env:
             - name: VELERO_SCRATCH_DIR
               value: /scratch
@@ -123,6 +125,8 @@ spec:
           emptyDir: {}
         - emptyDir: {}
           name: scratch
+        - emptyDir: {}
+          name: udmrepo
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000

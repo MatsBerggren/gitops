@@ -56,9 +56,13 @@ extraEnvVars:
 extraVolumes:
   - name: scratch
     emptyDir: {}
+  - name: udmrepo
+    emptyDir: {}
 extraVolumeMounts:
   - name: scratch
     mountPath: /scratch
+  - name: udmrepo
+    mountPath: /udmrepo
 
 # node-agent needs hostPath; keep it root but locked down
 nodeAgent:
