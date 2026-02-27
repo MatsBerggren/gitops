@@ -80,6 +80,11 @@ nodeAgent:
     capabilities:
       drop:
         - ALL
+  extraEnvVars:
+    - name: HOME
+      value: /scratch
+    - name: XDG_CACHE_HOME
+      value: /scratch/.cache
 
 # CRDs are managed by separate app (apps/system-tools/velero-crds)
 upgradeCRDs: false

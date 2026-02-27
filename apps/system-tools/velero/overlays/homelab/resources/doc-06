@@ -90,6 +90,10 @@ spec:
               value: /credentials/cloud
             - name: ALIBABA_CLOUD_CREDENTIALS_FILE
               value: /credentials/cloud
+            - name: HOME
+              value: /scratch
+            - name: XDG_CACHE_HOME
+              value: /scratch/.cache
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
