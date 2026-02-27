@@ -85,6 +85,8 @@ spec:
               mountPath: /credentials
             - name: scratch
               mountPath: /scratch
+            - mountPath: /scratch
+              name: scratch
           env:
             - name: VELERO_SCRATCH_DIR
               value: /scratch
@@ -119,6 +121,8 @@ spec:
           emptyDir: {}
         - name: scratch
           emptyDir: {}
+        - emptyDir: {}
+          name: scratch
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000

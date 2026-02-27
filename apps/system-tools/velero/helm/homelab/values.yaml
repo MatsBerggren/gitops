@@ -33,9 +33,6 @@ initContainers:
 # "Backup everything" incl PVCs: enable node-agent
 deployNodeAgent: true
 
-nodeAgent:
-  podVolumePath: /var/lib/kubelet/pods
-
 # Talos/PSS: make security contexts explicit
 podSecurityContext:
   runAsNonRoot: true
@@ -50,6 +47,18 @@ containerSecurityContext:
   capabilities:
     drop:
       - ALL
+
+# Give Velero a writable scratch dir for kopia repository config/cache
+# (kopia tries to create /udmrepo by default; pointing scratch dir to /scratch avoids permission issues)
+extraEnvVars:
+  - name: VELERO_SCRATCH_DIR
+    value: /scratch
+extraVolumes:
+  - name: scratch
+    emptyDir: {}
+extraVolumeMounts:
+  - name: scratch
+    mountPath: /scratch
 
 # node-agent needs hostPath; keep it root but locked down
 nodeAgent:
