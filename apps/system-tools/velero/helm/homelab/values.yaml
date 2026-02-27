@@ -53,6 +53,10 @@ containerSecurityContext:
 extraEnvVars:
   - name: VELERO_SCRATCH_DIR
     value: /scratch
+  - name: HOME
+    value: /scratch
+  - name: XDG_CACHE_HOME
+    value: /scratch/.cache
 extraVolumes:
   - name: scratch
     emptyDir: {}
