@@ -11,3 +11,4 @@ resources:
 
 patchesStrategicMerge:
   - argocd-cm-patch.yaml
+  - argocd-helm-repo-server-patch.yaml
