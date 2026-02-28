@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+data:
+  policy.default: role:readonly
+  policy.csv: |
+    p, role:readonly, applications, get, */*, allow
+    p, role:readonly, clusters, get, *, allow
+    p, role:readonly, repositories, get, *, allow
+
+    p, role:admin, *, *, */*, allow
+
+    # Map Keycloak realm roles -> Argo CD roles
+    g, argocd-admin, role:admin
+    g, argocd-readonly, role:readonly
+
+  # For Keycloak realm roles, roles are typically found under this claim path:
+  scopes: '[realm_access.roles]'

@@ -3,8 +3,24 @@ kind: ConfigMap
 metadata:
   name: argocd-cm
 data:
+  # Argo CD external URL (must match ingress host)
+  url: https://argocd.support4u.se
+
+  # Native OIDC (skip Dex)
+  # NOTE: Keycloak must be reachable from the user's browser at this URL.
+  oidc.config: |
+    name: Keycloak
+    issuer: https://auth.support4u.se/realms/HomeLab
+    clientID: argocd
+    clientSecret: $oidc.keycloak.clientSecret
+    requestedScopes:
+      - openid
+      - profile
+      - email
+
   # Allow Kustomize to render helmCharts/HelmChartInflationGenerator (required for many charts)
   kustomize.buildOptions: "--enable-helm"
+
   # Ignore status fields that can be persisted under StatefulSet volumeClaimTemplates
   # (seen on k3s) and otherwise cause perpetual OutOfSync.
   resource.customizations.ignoreDifferences.apps_StatefulSet: |
