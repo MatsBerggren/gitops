@@ -55,18 +55,20 @@ spec:
                   key: KEYCLOAK_ADMIN_PASSWORD
           readinessProbe:
             httpGet:
-              path: /q/health/ready
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 2
-          livenessProbe:
-            httpGet:
-              path: /q/health/live
+              path: /
               port: 8080
             initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 120
             periodSeconds: 20
             timeoutSeconds: 2
+            failureThreshold: 6
           resources:
             requests:
               cpu: 200m
