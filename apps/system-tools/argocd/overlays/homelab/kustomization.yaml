@@ -4,3 +4,4 @@ resources:
   - ../../../../argocd/overlays/homelab
   - argocd-cm-patch.yaml
   - argocd-rbac-cm-patch.yaml
+  - externalsecrets-oidc.yaml
