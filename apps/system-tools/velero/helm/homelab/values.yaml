@@ -68,15 +68,11 @@ extraEnvVars:
   - name: XDG_CACHE_HOME
     value: /scratch/.cache
 extraVolumes:
-  - name: scratch
-    emptyDir: {}
   - name: udmrepo
     emptyDir: {}
   - name: cache
     emptyDir: {}
 extraVolumeMounts:
-  - name: scratch
-    mountPath: /scratch
   - name: udmrepo
     mountPath: /udmrepo
   - name: cache
