@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+data:
+  policy.csv: |
+    # readonly role: can get applications, clusters, repositories
+    p, role:readonly, applications, get, */*, allow
+    p, role:readonly, clusters, get, *, allow
+    p, role:readonly, repositories, get, *, allow
+
+    # admin role: full access
+    p, role:admin, *, *, */*, allow
+
+    # Map Keycloak realm roles -> Argo CD roles
+    g, argocd-admin, role:admin
+    g, argocd-readonly, role:readonly
+  policy.default: role:admin
+  scopes: '[realm_access.roles]'
