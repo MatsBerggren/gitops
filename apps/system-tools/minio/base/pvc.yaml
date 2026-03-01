@@ -3,11 +3,11 @@ kind: PersistentVolumeClaim
 metadata:
   name: minio-data-nfs
 spec:
-  capacity:
-    storage: 2Ti
-  nfs:
-    server: 10.10.82.13
-    path: /md1200/minio
   accessModes:
     - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Ti
+  volumeName: minio-data-nfs-pv
   storageClassName: nfs-md1200
+  volumeMode: Filesystem
