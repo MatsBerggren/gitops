@@ -7,3 +7,7 @@ namespace: esphome
 resources:
   - ../../base
   - ingress.yaml
+  - namespace.yaml
+
+patchesStrategicMerge:
+  - hostnetwork-patch.yaml
