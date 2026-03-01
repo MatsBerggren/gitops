@@ -1,45 +1,55 @@
 ---
-# Source: velero/templates/deployment.yaml
+# Source: velero/templates/node-agent-daemonset.yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
-  name: velero
+  name: node-agent
   namespace: velero
   labels:
     app.kubernetes.io/name: velero
     app.kubernetes.io/instance: velero
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/version: 1.17.1
     helm.sh/chart: velero-11.4.0
-    component: velero
 spec:
-  replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
-      app.kubernetes.io/instance: velero
-      app.kubernetes.io/name: velero
+      name: node-agent
   template:
     metadata:
       labels:
-        name: velero
+        name: node-agent
+        role: node-agent
         app.kubernetes.io/name: velero
         app.kubernetes.io/instance: velero
         app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/version: 1.17.1
         helm.sh/chart: velero-11.4.0
       annotations:
         prometheus.io/path: /metrics
         prometheus.io/port: "8085"
         prometheus.io/scrape: "true"
     spec:
-      restartPolicy: Always
       serviceAccountName: velero-server
       automountServiceAccountToken: true
+      securityContext:
+        runAsUser: 0
+        seccompProfile:
+          type: RuntimeDefault
       terminationGracePeriodSeconds: 3600
+      volumes:
+        - name: cloud-credentials
+          secret:
+            secretName: cloud-credentials
+        - name: host-pods
+          hostPath:
+            path: /var/lib/kubelet/pods
+        - name: host-plugins
+          hostPath:
+            path: /var/lib/kubelet/plugins
+        - name: scratch
+          emptyDir: {}
+      dnsPolicy: ClusterFirst
       containers:
-        - name: velero
+        - name: node-agent
           image: "docker.io/velero/velero:v1.17.1"
           imagePullPolicy: IfNotPresent
           ports:
@@ -48,59 +58,30 @@ spec:
           command:
             - /velero
           args:
+            - node-agent
             - server
-            ### Flags
-            - --uploader-type=kopia
-            ### Global Flags
-            - --repo-maintenance-job-configmap=velero-repo-maintenance
-          livenessProbe:
-            failureThreshold: 5
-            httpGet:
-              path: /metrics
-              port: http-monitoring
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            successThreshold: 1
-            timeoutSeconds: 5
-          readinessProbe:
-            failureThreshold: 5
-            httpGet:
-              path: /metrics
-              port: http-monitoring
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            successThreshold: 1
-            timeoutSeconds: 5
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-              - ALL
           volumeMounts:
-            - name: plugins
-              mountPath: /plugins
             - name: cloud-credentials
               mountPath: /credentials
+            - name: host-pods
+              mountPath: /host_pods
+              mountPropagation: HostToContainer
+            - name: host-plugins
+              mountPath: /host_plugins
+              mountPropagation: HostToContainer
             - name: scratch
               mountPath: /scratch
-            - mountPath: /scratch
-              name: scratch
-            - mountPath: /udmrepo
-              name: udmrepo
-            - mountPath: /.cache
-              name: cache
           env:
-            - name: VELERO_SCRATCH_DIR
-              value: /scratch
             - name: VELERO_NAMESPACE
               valueFrom:
                 fieldRef:
-                  apiVersion: v1
                   fieldPath: metadata.namespace
-            - name: LD_LIBRARY_PATH
-              value: /plugins
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: VELERO_SCRATCH_DIR
+              value: /scratch
             - name: AWS_SHARED_CREDENTIALS_FILE
               value: /credentials/cloud
             - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -109,32 +90,12 @@ spec:
               value: /credentials/cloud
             - name: ALIBABA_CLOUD_CREDENTIALS_FILE
               value: /credentials/cloud
-      dnsPolicy: ClusterFirst
-      initContainers:
-        - image: velero/velero-plugin-for-aws:v1.11.0
-          imagePullPolicy: IfNotPresent
-          name: velero-plugin-for-aws
-          volumeMounts:
-          - mountPath: /target
-            name: plugins
-      volumes:
-        - name: cloud-credentials
-          secret:
-            secretName: cloud-credentials
-        - name: plugins
-          emptyDir: {}
-        - name: scratch
-          emptyDir: {}
-        - emptyDir: {}
-          name: scratch
-        - emptyDir: {}
-          name: udmrepo
-        - emptyDir: {}
-          name: cache
-      securityContext:
-        fsGroup: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
-        seccompProfile:
-          type: RuntimeDefault
+            - name: HOME
+              value: /scratch
+            - name: XDG_CACHE_HOME
+              value: /scratch/.cache
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL

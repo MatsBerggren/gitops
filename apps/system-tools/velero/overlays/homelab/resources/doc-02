@@ -1,20 +1,21 @@
 ---
-# Source: velero/templates/clusterrolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+# Source: velero/templates/repo-maintenance-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: velero-server
+  name: velero-repo-maintenance
+  namespace: velero
   labels:
-    app.kubernetes.io/component: server
     app.kubernetes.io/name: velero
     app.kubernetes.io/instance: velero
     app.kubernetes.io/managed-by: Helm
     helm.sh/chart: velero-11.4.0
-subjects:
-  - kind: ServiceAccount
-    namespace: velero
-    name: velero-server
-roleRef:
-  kind: ClusterRole
-  name: cluster-admin
-  apiGroup: rbac.authorization.k8s.io
+data:
+  global: |
+    {
+      "keepLatestMaintenanceJobs": 3
+    }
+  esphome-default-kopia: |
+    {
+      "keepLatestMaintenanceJobs": 1
+    }

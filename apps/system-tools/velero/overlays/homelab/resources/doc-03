@@ -1,20 +1,20 @@
 ---
-# Source: velero/templates/role.yaml
+# Source: velero/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRoleBinding
 metadata:
   name: velero-server
-  namespace: velero
   labels:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: velero
     app.kubernetes.io/instance: velero
     app.kubernetes.io/managed-by: Helm
     helm.sh/chart: velero-11.4.0
-rules:
-- apiGroups:
-    - "*"
-  resources:
-    - "*"
-  verbs:
-    - "*"
+subjects:
+  - kind: ServiceAccount
+    namespace: velero
+    name: velero-server
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io

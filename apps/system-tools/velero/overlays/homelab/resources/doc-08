@@ -1,23 +1,136 @@
 ---
-# Source: velero/templates/backupstoragelocation.yaml
-apiVersion: velero.io/v1
-kind: BackupStorageLocation
+# Source: velero/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: default
+  name: velero
   namespace: velero
   labels:
     app.kubernetes.io/name: velero
     app.kubernetes.io/instance: velero
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: 1.17.1
     helm.sh/chart: velero-11.4.0
+    component: velero
 spec:
-  provider: aws
-  accessMode: ReadWrite
-  default: true
-  objectStorage:
-    bucket: "velero"
-    prefix: "homelab"
-  config:
-    region: "minio"
-    s3ForcePathStyle: "true"
-    s3Url: "https://minio.support4u.se"
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: velero
+      app.kubernetes.io/name: velero
+  template:
+    metadata:
+      labels:
+        name: velero
+        app.kubernetes.io/name: velero
+        app.kubernetes.io/instance: velero
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/version: 1.17.1
+        helm.sh/chart: velero-11.4.0
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8085"
+        prometheus.io/scrape: "true"
+    spec:
+      restartPolicy: Always
+      serviceAccountName: velero-server
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: 3600
+      containers:
+        - name: velero
+          image: "docker.io/velero/velero:v1.17.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http-monitoring
+              containerPort: 8085
+          command:
+            - /velero
+          args:
+            - server
+            ### Flags
+            - --uploader-type=kopia
+            ### Global Flags
+            - --repo-maintenance-job-configmap=velero-repo-maintenance
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /metrics
+              port: http-monitoring
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /metrics
+              port: http-monitoring
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+          volumeMounts:
+            - name: plugins
+              mountPath: /plugins
+            - name: cloud-credentials
+              mountPath: /credentials
+            - name: scratch
+              mountPath: /scratch
+            - mountPath: /udmrepo
+              name: udmrepo
+            - mountPath: /.cache
+              name: cache
+          env:
+            - name: VELERO_SCRATCH_DIR
+              value: /scratch
+            - name: VELERO_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: LD_LIBRARY_PATH
+              value: /plugins
+            - name: AWS_SHARED_CREDENTIALS_FILE
+              value: /credentials/cloud
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /credentials/cloud
+            - name: AZURE_CREDENTIALS_FILE
+              value: /credentials/cloud
+            - name: ALIBABA_CLOUD_CREDENTIALS_FILE
+              value: /credentials/cloud
+      dnsPolicy: ClusterFirst
+      initContainers:
+        - image: velero/velero-plugin-for-aws:v1.11.0
+          imagePullPolicy: IfNotPresent
+          name: velero-plugin-for-aws
+          volumeMounts:
+          - mountPath: /target
+            name: plugins
+      volumes:
+        - name: cloud-credentials
+          secret:
+            secretName: cloud-credentials
+        - name: plugins
+          emptyDir: {}
+        - name: scratch
+          emptyDir: {}
+        - emptyDir: {}
+          name: udmrepo
+        - emptyDir: {}
+          name: cache
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
