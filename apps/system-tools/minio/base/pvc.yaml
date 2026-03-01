@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: minio-data-ceph
+  name: minio-data-nfs
 spec:
-  accessModes: ["ReadWriteOnce"]
-  resources:
-    requests:
-      storage: 20Gi
-  storageClassName: ceph-rbd
+  capacity:
+    storage: 2Ti
+  nfs:
+    server: 10.10.82.13
+    path: /md1200/minio
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: nfs-md1200
