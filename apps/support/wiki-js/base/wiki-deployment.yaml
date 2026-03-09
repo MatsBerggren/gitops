@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-js
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: wiki-js
+  template:
+    metadata:
+      labels:
+        app: wiki-js
+    spec:
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:17-alpine
+          command:
+            - sh
+            - -lc
+            - |
+              echo "Waiting for PostgreSQL DNS..."
+              until getent hosts wiki-postgres >/dev/null 2>&1; do sleep 2; done
+              echo "Waiting for PostgreSQL..."
+              until pg_isready -h wiki-postgres -p 5432 -U "$DB_USER" -d "$DB_NAME"; do sleep 2; done
+          envFrom:
+            - secretRef:
+                name: wiki-secret
+      containers:
+        - name: wiki-js
+          image: ghcr.io/requarks/wiki:2
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: wiki-secret
+          ports:
+            - containerPort: 3000
+              name: http
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            failureThreshold: 6
